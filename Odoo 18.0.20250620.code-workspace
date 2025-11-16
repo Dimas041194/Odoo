@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "C:/Program Files/Odoo 18.0.20250620"
+		},
+		{
+			"path": "../../odoo_custom_addons"
+		}
+	],
+	"settings": {}
+}
