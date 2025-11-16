@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Root menu utama untuk Purchase Requests -->
+  <menuitem id="menu_purchase_request_root" name="Purchase Requests" sequence="10"/>
+
+  <!-- Action untuk daftar Purchase Requests -->
+  <record id="action_purchase_request_list" model="ir.actions.act_window">
+    <field name="name">Purchase Requests</field>
+    <field name="res_model">pr.purchase.request</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Menu utama yang memanggil action Purchase Requests -->
+  <menuitem id="menu_purchase_request_main" name="Purchase Requests" parent="menu_purchase_request_root" action="action_purchase_request_list"/>
+
+  <!-- Sub menu Approval Rules -->
+  <menuitem id="menu_approval_rule_root" name="Approval Rules" parent="menu_purchase_request_root" sequence="20"/>
+
+  <!-- Action untuk daftar Approval Rules -->
+  <record id="action_approval_rule" model="ir.actions.act_window">
+    <field name="name">Approval Rules</field>
+    <field name="res_model">pr.approval.rule</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Menu yang memanggil daftar Approval Rules -->
+  <menuitem id="menu_approval_rule" name="Approval Rules" parent="menu_approval_rule_root" action="action_approval_rule"/>
+  
+</odoo>

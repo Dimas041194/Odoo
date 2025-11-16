@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Grup untuk user biasa pembuat Purchase Request -->
+  <record id="group_purchase_request_user" model="res.groups">
+    <field name="name">Purchase Request User</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
+  </record>
+
+  <!-- Grup untuk user approver Purchase Request -->
+  <record id="group_purchase_request_approver" model="res.groups">
+    <field name="name">Purchase Request Approver</field>
+    <field name="category_id" ref="base.module_category_hidden"/>
+  </record>
+</odoo>

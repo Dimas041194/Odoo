@@ -1,0 +1,51 @@
+<odoo>
+    <record id="view_approval_flow_list" model="ir.ui.view">
+        <field name="name">custom.approval.flow.list</field>
+        <field name="model">custom.approval.flow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="level"/>
+                <field name="approver_group_id"/>
+                <field name="min_approvers"/>
+                <field name="parallel_approval"/>
+                <field name="condition_domain"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_flow_form" model="ir.ui.view">
+        <field name="name">custom.approval.flow.form</field>
+        <field name="model">custom.approval.flow</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="model_id"/>
+                        <field name="level"/>
+                        <field name="approver_group_id"/>
+                        <field name="min_approvers"/>
+                        <field name="parallel_approval"/>
+                        <field name="condition_domain"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Definisikan action window dulu -->
+    <record id="action_approval_flow" model="ir.actions.act_window">
+        <field name="name">Approval Flows</field>
+        <field name="res_model">custom.approval.flow</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p>Configure approval flows per model and level.</p>
+        </field>
+    </record>
+
+    <!-- Baru definisikan menuitem yang menggunakan action -->
+    <menuitem id="menu_custom_approval_root" name="Custom Approval" sequence="10"/>
+    <menuitem id="menu_custom_approval_flow" name="Approval Flows" parent="menu_custom_approval_root" action="action_approval_flow"/>
+</odoo>

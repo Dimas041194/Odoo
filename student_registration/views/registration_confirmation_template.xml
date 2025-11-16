@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <template id="registration_confirmation" name="Registration Confirmation">
+      <t t-call="website.layout">
+        <div class="container mt-5">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <h2>Terima Kasih, <t t-esc="student_name"/>!</h2>
+              <p>Pendaftaran Anda telah berhasil dilakukan.</p>
+              <p>Anda akan menerima email konfirmasi dalam beberapa menit ke depan. Silakan cek email Anda untuk informasi lebih lanjut.</p>
+              <a href="/" class="btn btn-primary">Kembali ke Halaman Utama</a>
+            </div>
+          </div>
+        </div>
+      </t>
+    </template>
+  </data>
+</odoo>

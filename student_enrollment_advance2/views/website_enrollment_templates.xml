@@ -1,0 +1,152 @@
+<odoo>
+    <!-- Formulir Pendaftaran Siswa Baru -->
+    <template id="website_enrollment_form" name="Student Enrollment Advanced Form">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-header bg-gradient-primary text-white text-center">
+                                <h4><i class="fa fa-graduation-cap"></i> Formulir Pendaftaran Siswa Baru</h4>
+                            </div>
+                            <div class="card-body px-4 py-4">
+                                <form id="enrollmentForm"
+                                    action="/enrollment/register/submit"
+                                    method="post"
+                                    enctype="multipart/form-data"
+                                    autocomplete="off">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Lengkap*</label>
+                                        <input type="text" name="name" required="required" class="form-control" placeholder="Nama sesuai KTP"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">NIK* <span id="nik_check" class="text-danger" style="display:none;">NIK sudah terdaftar!</span></label>
+                                        <input type="text" name="nik" required="required" class="form-control" id="nikInput" pattern="[\d]{16}" maxlength="16" placeholder="16 digit NIK"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email*</label>
+                                        <input type="email" name="email" required="required" class="form-control"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Telepon</label>
+                                        <input type="text" name="phone" class="form-control"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Dokumen (PDF/JPG/PNG, wajib)</label>
+                                        <input type="file" name="attachment" required="required" class="form-control" id="uploadInput" accept=".pdf,.jpg,.jpeg,.png"/>
+                                        <div id="filePreview" class="mt-2"></div>
+                                    </div>
+                                    <!-- Tambahkan baris ini sebelum button submit -->
+    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token"/>
+                                    <button type="submit" class="btn btn-success w-100 py-2 mb-1">
+                                        <i class="fa fa-send"></i> Daftar Sekarang
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+            // Live AJAX validation for NIK
+            document.addEventListener("DOMContentLoaded", function () {
+                var nikInput = document.getElementById("nikInput");
+                if(nikInput){
+                    nikInput.addEventListener("blur", function() {
+                        var nik = this.value;
+                       if (nik.length === 16 &amp;&amp; /^\d+$/.test(nik))  {
+                            fetch('/enrollment/validate_nik', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                                body: JSON.stringify({ nik: nik })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById("nik_check").style.display = data.exists ? "inline" : "none";
+                                document.querySelector("button[type='submit']").disabled = !!data.exists;
+                            });
+                        }
+                    });
+                }
+
+                // File preview: PDF, Image
+                var uploadInput = document.getElementById("uploadInput");
+                if(uploadInput){
+                    uploadInput.addEventListener("change", function() {
+                        var f = this.files[0];
+                        var box = document.getElementById("filePreview");
+                        if (!f) { box.innerHTML = ""; return; }
+                        box.innerHTML = "";
+                        var type = f.type;
+                        if (type.startsWith("image/")) {
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                box.innerHTML = '<img src="' + e.target.result + '" style="max-width:120px;max-height:120px;border: 1px solid #ccc;"/>';
+                            };
+                            reader.readAsDataURL(f);
+                        } else if (type === "application/pdf") {
+                            box.innerHTML = '<i class="fa fa-file-pdf-o fa-2x text-danger"></i> File PDF siap diunggah.';
+                        } else {
+                            box.innerHTML = '<small class="text-danger">Format tidak didukung</small>';
+                        }
+                    });
+                }
+            });
+            </script>
+        </t>
+    </template>
+
+    <!-- Success Page with Print Friendly Card -->
+    <template id="enrollment_success" name="Enrollment Advanced Success">
+        <t t-call="website.layout">
+            <div class="container mt-5" id="print_area">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-success text-white text-center">
+                                <h4><i class="fa fa-check-circle"></i> Pendaftaran Anda Diterima!</h4>
+                            </div>
+                            <div class="card-body px-4">
+                                <h5 class="mb-3 text-primary">Bukti Pendaftaran</h5>
+                                <table class="table table-bordered mb-3">
+                                    <tr><th>Nama</th><td><t t-esc="name"/></td></tr>
+                                    <tr><th>NIK</th><td><t t-esc="nik"/></td></tr>
+                                    <tr><th>Email</th><td><t t-esc="email"/></td></tr>
+                                    <tr><th>Telepon</th><td><t t-esc="phone"/></td></tr>
+                                </table>
+                                <button class="btn btn-outline-primary" onclick="window.print()"><i class="fa fa-print"></i> Print Bukti</button>
+                                <p class="mt-3 text-success">Cek email Anda untuk konfirmasi resmi.<br/>Tunjukkan bukti ini ke sekolah jika diperlukan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Error Duplicate NIK -->
+    <template id="error_duplicate_nik" name="Duplicate NIK Error">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="alert alert-danger">
+                    <h5><i class="fa fa-times"></i> NIK Sudah Pernah Didaftar</h5>
+                    <p>NIK <strong><t t-esc="nik"/></strong> sudah ada dalam sistem. Mohon periksa data atau hubungi admin jika bantuan diperlukan.</p>
+                    <a href="/enrollment/register" class="btn btn-secondary mt-2">Kembali ke Form</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Attachment error -->
+    <template id="error_attachment_missing" name="Attachment Missing Error">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="alert alert-danger">
+                    <h5>Dokumen Wajib Diupload</h5>
+                    <p>Silakan upload dokumen pendukung pendaftaran Anda.</p>
+                    <a href="/enrollment/register" class="btn btn-secondary mt-2">Kembali ke Form</a>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

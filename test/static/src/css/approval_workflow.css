@@ -1,0 +1,334 @@
+/* Approval Workflow Styles */
+
+.oe_approval_progress {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.oe_approval_progress h3 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.progress_bar {
+    width: 100%;
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.progress_fill {
+    height: 100%;
+    background-color: #007bff;
+    transition: width 0.3s ease;
+}
+
+.level_info {
+    text-align: center;
+    font-weight: bold;
+    color: #495057;
+}
+
+/* Approval Status Badges */
+.o_approval_status_draft {
+    background-color: #6c757d;
+    color: white;
+}
+
+.o_approval_status_pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.o_approval_status_approved {
+    background-color: #28a745;
+    color: white;
+}
+
+.o_approval_status_rejected {
+    background-color: #dc3545;
+    color: white;
+}
+
+.o_approval_status_cancelled {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Approval Cards */
+.o_approval_card {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: white;
+}
+
+.o_approval_card:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.o_approval_card_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.o_approval_card_title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.o_approval_card_status {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.o_approval_card_body {
+    color: #6c757d;
+}
+
+.o_approval_card_footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Approval Timeline */
+.o_approval_timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.o_approval_timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.o_approval_timeline_item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.o_approval_timeline_item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #007bff;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+.o_approval_timeline_item.completed::before {
+    background-color: #28a745;
+    box-shadow: 0 0 0 2px #28a745;
+}
+
+.o_approval_timeline_item.rejected::before {
+    background-color: #dc3545;
+    box-shadow: 0 0 0 2px #dc3545;
+}
+
+.o_approval_timeline_content {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.o_approval_timeline_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.o_approval_timeline_title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.o_approval_timeline_date {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.o_approval_timeline_body {
+    color: #6c757d;
+}
+
+/* Notification Styles */
+.o_notification_item {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: white;
+}
+
+.o_notification_item.unread {
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+}
+
+.o_notification_item.read {
+    opacity: 0.7;
+}
+
+.o_notification_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.o_notification_title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.o_notification_date {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.o_notification_body {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.o_notification_actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Dashboard Styles */
+.o_approval_dashboard {
+    padding: 20px;
+}
+
+.o_approval_dashboard_stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.o_approval_stat_card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+}
+
+.o_approval_stat_number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 5px;
+}
+
+.o_approval_stat_label {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.o_approval_dashboard_charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.o_approval_chart_card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.o_approval_chart_title {
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .o_approval_dashboard_stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .o_approval_dashboard_charts {
+        grid-template-columns: 1fr;
+    }
+    
+    .o_approval_card_header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .o_approval_card_footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.o_approval_card {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Loading States */
+.o_approval_loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.o_approval_spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

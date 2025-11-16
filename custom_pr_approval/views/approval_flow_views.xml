@@ -1,0 +1,35 @@
+<odoo>
+    <record id="view_approval_flow_tree" model="ir.ui.view">
+        <field name="name">custom.approval.flow.tree</field>
+        <field name="model">custom.approval.flow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="level"/>
+                <field name="approver_group_id"/>
+                <field name="min_amount"/>
+                <field name="condition_domain"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_flow_form" model="ir.ui.view">
+        <field name="name">custom.approval.flow.form</field>
+        <field name="model">custom.approval.flow</field>
+        <field name="arch" type="xml">
+            <form string="Approval Flow">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="model_id" options="{'no_create': True}"/>
+                        <field name="level"/>
+                        <field name="approver_group_id"/>
+                        <field name="min_amount"/>
+                        <field name="condition_domain" placeholder="e.g. [('user_id','=',user.id)]"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

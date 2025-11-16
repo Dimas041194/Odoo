@@ -1,0 +1,32 @@
+<odoo>
+  <record id="view_student_enrollment_list" model="ir.ui.view">
+    <field name="name">student.enrollment.list</field>
+    <field name="model">res.partner</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="nik"/>
+        <field name="email"/>
+        <field name="phone"/>
+        <field name="enrollment_status"/>
+        <field name="create_date"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="action_student_enrollment" model="ir.actions.act_window">
+    <field name="name">Calon Siswa</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('enrollment_status','=','pre')]</field>
+  </record>
+
+  <menuitem id="menu_student_enrollment_root"
+            name="Pendaftaran Siswa"
+            parent="contacts.menu_contacts"
+            sequence="10"/>
+  <menuitem id="menu_student_enrollment"
+            name="Calon Siswa Baru"
+            parent="menu_student_enrollment_root"
+            action="action_student_enrollment"/>
+</odoo>

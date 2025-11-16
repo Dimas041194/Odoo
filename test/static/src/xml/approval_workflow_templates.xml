@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <!-- Approval Workflow Kanban Template -->
+    <t t-name="approval_workflow.KanbanCard">
+        <div class="oe_kanban_card oe_kanban_global_click">
+            <div class="oe_kanban_content">
+                <div class="o_kanban_record_top">
+                    <div class="o_kanban_record_headings">
+                        <strong class="o_kanban_record_title">
+                            <field name="name"/>
+                        </strong>
+                        <div class="o_kanban_record_subtitle">
+                            <field name="workflow_type"/>
+                        </div>
+                    </div>
+                    <div class="o_kanban_record_priority">
+                        <field name="state" widget="priority"/>
+                    </div>
+                </div>
+                <div class="o_kanban_record_body">
+                    <div class="o_kanban_record_details">
+                        <div class="o_kanban_record_detail">
+                            <strong>Requester:</strong> <field name="requester_id"/>
+                        </div>
+                        <div class="o_kanban_record_detail">
+                            <strong>Amount:</strong> <field name="amount"/> <field name="currency_id"/>
+                        </div>
+                        <div class="o_kanban_record_detail">
+                            <strong>Request Date:</strong> <field name="request_date"/>
+                        </div>
+                        <div class="o_kanban_record_detail" t-if="approval_deadline">
+                            <strong>Deadline:</strong> <field name="approval_deadline"/>
+                        </div>
+                    </div>
+                    <div class="o_kanban_record_progress" t-if="state != 'draft'">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 25%"></div>
+                        </div>
+                        <small>Level <field name="current_level_sequence"/> of <field name="total_levels"/></small>
+                    </div>
+                </div>
+                <div class="o_kanban_record_footer" t-if="state == 'pending'">
+                    <button class="btn btn-sm btn-success o_approval_quick_approve" data-record-id="record.id.raw_value">
+                        Approve
+                    </button>
+                    <button class="btn btn-sm btn-danger o_approval_quick_reject" data-record-id="record.id.raw_value">
+                        Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Approval Timeline Template -->
+    <t t-name="approval_workflow.Timeline">
+        <div class="o_approval_timeline">
+            <t t-foreach="approval_ids" t-as="approval">
+                <div class="o_approval_timeline_item" t-att-class="approval.state">
+                    <div class="o_approval_timeline_content">
+                        <div class="o_approval_timeline_header">
+                            <div class="o_approval_timeline_title">
+                                <field name="approval.level_id.name"/>
+                            </div>
+                            <div class="o_approval_timeline_date">
+                                <field name="approval.create_date"/>
+                            </div>
+                        </div>
+                        <div class="o_approval_timeline_body">
+                            <p><strong>Approver:</strong> <field name="approval.approver_id.name"/></p>
+                            <p t-if="approval.comments"><strong>Comments:</strong> <field name="approval.comments"/></p>
+                            <p t-if="approval.rejection_reason"><strong>Rejection Reason:</strong> <field name="approval.rejection_reason"/></p>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- Notification Item Template -->
+    <t t-name="approval_workflow.NotificationItem">
+        <div class="o_notification_item" t-att-class="{'unread': state == 'sent', 'read': state == 'opened'}">
+            <div class="o_notification_header">
+                <div class="o_notification_title">
+                    <field name="subject"/>
+                </div>
+                <div class="o_notification_date">
+                    <field name="sent_date"/>
+                </div>
+            </div>
+            <div class="o_notification_body">
+                <field name="body_text"/>
+            </div>
+            <div class="o_notification_actions" t-if="state == 'sent'">
+                <button class="btn btn-sm btn-primary o_notification_mark_opened" data-record-id="record.id.raw_value">
+                    Mark as Read
+                </button>
+            </div>
+        </div>
+    </t>
+
+    <!-- Dashboard Stats Template -->
+    <t t-name="approval_workflow.DashboardStats">
+        <div class="o_approval_dashboard_stats">
+            <div class="o_approval_stat_card">
+                <div class="o_approval_stat_number">
+                    <field name="total_workflows"/>
+                </div>
+                <div class="o_approval_stat_label">Total Workflows</div>
+            </div>
+            <div class="o_approval_stat_card">
+                <div class="o_approval_stat_number">
+                    <field name="pending_workflows"/>
+                </div>
+                <div class="o_approval_stat_label">Pending</div>
+            </div>
+            <div class="o_approval_stat_card">
+                <div class="o_approval_stat_number">
+                    <field name="approved_workflows"/>
+                </div>
+                <div class="o_approval_stat_label">Approved</div>
+            </div>
+            <div class="o_approval_stat_card">
+                <div class="o_approval_stat_number">
+                    <field name="rejected_workflows"/>
+                </div>
+                <div class="o_approval_stat_label">Rejected</div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Approval Progress Template -->
+    <t t-name="approval_workflow.ProgressBar">
+        <div class="o_approval_progress">
+            <h3>Approval Progress</h3>
+            <div class="progress_bar">
+                <div class="progress_fill" t-att-style="'width: ' + (current_level_sequence / total_levels * 100) + '%'"></div>
+            </div>
+            <div class="level_info">
+                Level <field name="current_level_sequence"/> of <field name="total_levels"/>
+            </div>
+        </div>
+    </t>
+
+    <!-- Quick Actions Template -->
+    <t t-name="approval_workflow.QuickActions">
+        <div class="o_approval_quick_actions">
+            <button class="btn btn-primary o_approval_create_workflow">
+                <i class="fa fa-plus"></i> Create Workflow
+            </button>
+            <button class="btn btn-info o_approval_pending_approvals">
+                <i class="fa fa-clock-o"></i> Pending Approvals
+            </button>
+            <button class="btn btn-success o_approval_dashboard">
+                <i class="fa fa-dashboard"></i> Dashboard
+            </button>
+        </div>
+    </t>
+
+    <!-- Loading Template -->
+    <t t-name="approval_workflow.Loading">
+        <div class="o_approval_loading">
+            <div class="o_approval_spinner"></div>
+        </div>
+    </t>
+
+</templates>

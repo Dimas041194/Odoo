@@ -1,0 +1,36 @@
+<odoo>
+    <menuitem id="menu_custom_pr_approval_root" name="Custom PR Approval" sequence="10"/>
+
+    <menuitem id="menu_custom_approval_flow" name="Approval Flows" parent="menu_custom_pr_approval_root" action="action_approval_flow"/>
+
+    <menuitem id="menu_custom_approval_requests" name="Approval Requests" parent="menu_custom_pr_approval_root" action="action_approval_requests"/>
+
+    <menuitem id="menu_custom_purchase_request" name="Purchase Requests" parent="menu_custom_pr_approval_root" action="action_purchase_request"/>
+
+    <menuitem id="menu_custom_purchase_order" name="Purchase Orders" parent="menu_custom_pr_approval_root" action="action_purchase_order"/>
+
+    <record id="action_approval_flow" model="ir.actions.act_window">
+        <field name="name">Approval Flows</field>
+        <field name="res_model">custom.approval.flow</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_requests" model="ir.actions.act_window">
+        <field name="name">Approval Requests</field>
+        <field name="res_model">custom.approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('approver_id', '=', user.id)]</field>
+    </record>
+
+    <record id="action_purchase_request" model="ir.actions.act_window">
+        <field name="name">Purchase Requests</field>
+        <field name="res_model">purchase.request</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <record id="action_purchase_order" model="ir.actions.act_window">
+        <field name="name">Purchase Orders</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+</odoo>

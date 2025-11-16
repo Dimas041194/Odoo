@@ -1,0 +1,20 @@
+<odoo>
+    <record id="email_template_approval" model="mail.template">
+        <field name="name">Approval Request Email</field>
+    <field name="model_id" eval="False"/>
+        <field name="subject">Your Approval Request: ${object.name}</field>
+        <field name="email_from">${(user.email_formatted or '')|safe}</field>
+        <field name="email_to">${user.email|safe}</field>
+        <field name="body_html">
+            <![CDATA[
+            <p>Dear ${user.name},</p>
+            <p>You have a pending approval request: <b>${object.name}</b>.</p>
+            <p>
+              <a href="${ctx.get('base_url')}/approve/${object.id}/approve/${ctx.get('token')}">Approve</a> |
+              <a href="${ctx.get('base_url')}/approve/${object.id}/reject/${ctx.get('token')}">Reject</a>
+            </p>
+            <p>Click the links to approve or reject the request.</p>
+            ]]>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<odoo>
+    <record id="email_template_approval_request" model="mail.template">
+        <field name="name">Approval Request Notification</field>
+        <field name="email_from">${(user.email or 'noreply@example.com')|safe}</field>
+        <field name="subject">Approval Request: ${object.name}</field>
+        <field name="model_id" ref="model_custom_approval_request"/>
+        <field name="body_html"><![CDATA[
+            <p>Dear ${user.name},</p>
+            <p>You have a pending approval request: <b>${object.name}</b>.</p>
+            <p>Please review and approve/reject it in the system.</p>
+            <p><a href="/web#id=${object.id}&model=custom.approval.request&view_type=form">Click here to open</a></p>
+        ]]></field>
+    </record>
+
+    <record id="email_template_approval_reminder" model="mail.template">
+        <field name="name">Approval Reminder Notification</field>
+        <field name="email_from">${(user.email or 'noreply@example.com')|safe}</field>
+        <field name="subject">Reminder: Pending Approval Request ${object.name}</field>
+        <field name="model_id" ref="model_custom_approval_request"/>
+        <field name="body_html"><![CDATA[
+            <p>Dear ${user.name},</p>
+            <p>This is a reminder for pending approval request: <b>${object.name}</b>.</p>
+            <p>Please take action as soon as possible.</p>
+            <p><a href="/web#id=${object.id}&model=custom.approval.request&view_type=form">Open Approval Request</a></p>
+        ]]></field>
+    </record>
+</odoo>

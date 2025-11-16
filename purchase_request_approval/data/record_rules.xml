@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Record rule untuk user requester hanya bisa lihat PR yang dia buat -->
+  <record id="pr_rule_requester_own" model="ir.rule">
+    <field name="name">Purchase Request: own records only (requester)</field>
+    <field name="model_id" ref="model_pr_purchase_request"/>
+    <field name="domain_force">[('requester_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+  </record>
+
+  <!-- Record rule untuk user approver hanya bisa lihat PR yang menunggu persetujuannya -->
+  <record id="pr_rule_approver_waiting" model="ir.rule">
+    <field name="name">Purchase Request: approver waiting only</field>
+    <field name="model_id" ref="model_pr_purchase_request"/>
+    <field name="domain_force">[('user_is_approver', '=', True), ('state', '=', 'waiting_approval')]</field>
+    <field name="groups" eval="[(4, ref('purchase_request_approval.group_purchase_request_approver'))]"/>
+  </record>
+</odoo>

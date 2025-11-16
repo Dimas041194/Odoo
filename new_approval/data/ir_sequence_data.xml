@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_new_approval_request" model="ir.sequence">
+        <field name="name">New Approval Request</field>
+        <field name="code">new.approval.request</field>
+        <field name="prefix">NAR</field>
+        <field name="padding">5</field>
+        <field name="implementation">no_gap</field>
+    </record>
+</odoo>

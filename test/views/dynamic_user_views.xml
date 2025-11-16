@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dynamic User Tree View -->
+    <record id="view_dynamic_user_tree" model="ir.ui.view">
+        <field name="name">dynamic.user.tree</field>
+        <field name="model">dynamic.user</field>
+        <field name="arch" type="xml">
+            <tree string="Dynamic Users" decoration-success="current_status=='available'" decoration-warning="current_status=='busy'" decoration-muted="current_status=='offline'">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="department_id"/>
+                <field name="job_id"/>
+                <field name="approval_capacity"/>
+                <field name="max_approval_amount"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="current_status" widget="badge" decoration-success="current_status=='available'" decoration-warning="current_status=='busy'" decoration-muted="current_status=='offline'"/>
+                <field name="is_online" widget="boolean_toggle"/>
+                <field name="total_approvals" string="Total Approvals"/>
+                <field name="pending_approvals" string="Pending"/>
+                <field name="average_approval_time" string="Avg Time (Hrs)"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Dynamic User Form View -->
+    <record id="view_dynamic_user_form" model="ir.ui.view">
+        <field name="name">dynamic.user.form</field>
+        <field name="model">dynamic.user</field>
+        <field name="arch" type="xml">
+            <form string="Dynamic User">
+                <header>
+                    <button name="action_update_activity" string="Update Activity" type="object" class="btn-info"/>
+                    <button name="action_set_status" string="Set Available" type="object" class="btn-success" attrs="{'invisible': [('current_status', '=', 'available')]}"/>
+                    <button name="action_set_status" string="Set Busy" type="object" class="btn-warning" attrs="{'invisible': [('current_status', '=', 'busy')]}"/>
+                    <button name="action_set_status" string="Set Away" type="object" class="btn-secondary" attrs="{'invisible': [('current_status', '=', 'away')]}"/>
+                    <button name="action_set_status" string="Set Offline" type="object" class="btn-danger" attrs="{'invisible': [('current_status', '=', 'offline')]}"/>
+                    <field name="current_status" widget="statusbar" statusbar_visible="available,busy,away,offline"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="User Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="department_id"/>
+                            <field name="job_id"/>
+                            <field name="manager_id"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Approval Capabilities -->
+                    <group>
+                        <group>
+                            <field name="approval_capacity"/>
+                            <field name="max_approval_amount" attrs="{'invisible': [('approval_capacity', '!=', 'limited')]}"/>
+                            <field name="currency_id" attrs="{'invisible': [('approval_capacity', '!=', 'limited')]}"/>
+                        </group>
+                        <group>
+                            <field name="approval_categories" widget="many2many_tags" attrs="{'invisible': [('approval_capacity', 'not in', ['category', 'custom'])]}"/>
+                            <field name="approval_departments" widget="many2many_tags" attrs="{'invisible': [('approval_capacity', 'not in', ['department', 'custom'])]}"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Custom Rules -->
+                    <group attrs="{'invisible': [('approval_capacity', '!=', 'custom')]}">
+                        <field name="custom_rules" widget="ace" options="{'mode': 'json'}" placeholder="Enter custom approval rules in JSON format"/>
+                        <field name="rule_conditions" widget="ace" options="{'mode': 'json'}" placeholder="Enter rule conditions in JSON format"/>
+                    </group>
+                    
+                    <!-- Availability and Schedule -->
+                    <group>
+                        <group>
+                            <field name="available_hours"/>
+                            <field name="available_days"/>
+                            <field name="custom_days" attrs="{'invisible': [('available_days', '!=', 'custom')]}"/>
+                        </group>
+                        <group>
+                            <field name="last_activity" readonly="1"/>
+                            <field name="is_online" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Delegation and Backup -->
+                    <group>
+                        <group>
+                            <field name="delegate_to_id"/>
+                            <field name="auto_delegate"/>
+                        </group>
+                        <group>
+                            <field name="backup_user_ids" widget="many2many_tags"/>
+                            <field name="delegation_rules" widget="ace" options="{'mode': 'json'}" placeholder="Enter delegation rules in JSON format"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Notification Preferences -->
+                    <group>
+                        <group>
+                            <field name="email_notifications"/>
+                            <field name="sms_notifications"/>
+                            <field name="push_notifications"/>
+                        </group>
+                        <group>
+                            <field name="notification_frequency"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Statistics -->
+                    <notebook>
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group>
+                                    <field name="total_approvals" readonly="1"/>
+                                    <field name="pending_approvals" readonly="1"/>
+                                    <field name="approved_count" readonly="1"/>
+                                    <field name="rejected_count" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="average_approval_time" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Approvals" name="approvals">
+                            <field name="approval_ids" readonly="1">
+                                <tree string="User Approvals" decoration-info="state=='pending'" decoration-success="state=='approved'" decoration-danger="state=='rejected'">
+                                    <field name="workflow_id"/>
+                                    <field name="level_id"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="create_date"/>
+                                    <field name="approved_date"/>
+                                    <field name="rejected_date"/>
+                                    <field name="processing_time"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Delegated Approvals" name="delegated_approvals">
+                            <field name="delegated_approval_ids" readonly="1">
+                                <tree string="Delegated Approvals" decoration-info="state=='pending'" decoration-success="state=='approved'" decoration-danger="state=='rejected'">
+                                    <field name="workflow_id"/>
+                                    <field name="level_id"/>
+                                    <field name="approver_id"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="create_date"/>
+                                    <field name="approved_date"/>
+                                    <field name="rejected_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Dynamic User Search View -->
+    <record id="view_dynamic_user_search" model="ir.ui.view">
+        <field name="name">dynamic.user.search</field>
+        <field name="model">dynamic.user</field>
+        <field name="arch" type="xml">
+            <search string="Search Dynamic Users">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="department_id"/>
+                <field name="job_id"/>
+                <field name="approval_capacity"/>
+                <separator/>
+                <filter string="Available" name="available" domain="[('current_status', '=', 'available')]"/>
+                <filter string="Busy" name="busy" domain="[('current_status', '=', 'busy')]"/>
+                <filter string="Away" name="away" domain="[('current_status', '=', 'away')]"/>
+                <filter string="Offline" name="offline" domain="[('current_status', '=', 'offline')]"/>
+                <filter string="Online" name="online" domain="[('is_online', '=', True)]"/>
+                <separator/>
+                <filter string="Unlimited Capacity" name="unlimited" domain="[('approval_capacity', '=', 'unlimited')]"/>
+                <filter string="Limited Capacity" name="limited" domain="[('approval_capacity', '=', 'limited')]"/>
+                <filter string="Department Based" name="department" domain="[('approval_capacity', '=', 'department')]"/>
+                <filter string="Category Based" name="category" domain="[('approval_capacity', '=', 'category')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'current_status'}"/>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department_id'}"/>
+                    <filter string="Job Position" name="group_job" context="{'group_by': 'job_id'}"/>
+                    <filter string="Approval Capacity" name="group_capacity" context="{'group_by': 'approval_capacity'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Dynamic User Action -->
+    <record id="action_dynamic_user" model="ir.actions.act_window">
+        <field name="name">Dynamic Users</field>
+        <field name="res_model">dynamic.user</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_dynamic_user_search"/>
+        <field name="context">{'search_default_available': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first dynamic user!
+            </p>
+            <p>
+                Dynamic users manage the approval process with flexible capabilities and availability.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_dynamic_users" name="Dynamic Users" parent="base.menu_administration" sequence="30"/>
+    <menuitem id="menu_dynamic_users_list" name="All Users" parent="menu_dynamic_users" action="action_dynamic_user" sequence="10"/>
+
+</odoo>

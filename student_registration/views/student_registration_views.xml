@@ -1,0 +1,33 @@
+<odoo>
+  <record id="student_registration_form_new" model="ir.ui.view">
+    <field name="name">student.registration.form.new</field>
+    <field name="model">student.registration</field>
+    <field name="arch" type="xml">
+      <form string="Student Registration (Baru)">
+        <group>
+          <field name="photo" widget="image" filename="photo_filename" class="oe_avatar"/>
+          <field name="name"/>
+          <field name="nik"/>
+          <field name="address"/>
+          <field name="email"/>
+          <field name="documents" filename="documents_filename"/>
+        </group>
+        <field name="message_attachment_count" invisible="1"/>
+        <field name="message_ids" widget="mail_thread"/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_student_registration_new" model="ir.actions.act_window">
+    <field name="name">Student Registrations (Baru)</field>
+    <field name="res_model">student.registration</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="student_registration_form_new"/>
+  </record>
+
+  <menuitem id="menu_student_registration_baru"
+            name="Student Registrations Baru"
+            parent="base.menu_custom"
+            action="action_student_registration_new"
+            sequence="1"/>
+</odoo>

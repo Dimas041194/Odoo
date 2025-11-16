@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_approval_main" 
+              name="Approval System" 
+              sequence="10" 
+              web_icon="approval_workflow,static/description/icon.png"/>
+
+    <!-- Workflow Management -->
+    <menuitem id="menu_approval_workflows" 
+              name="Workflows" 
+              parent="menu_approval_main" 
+              sequence="10"/>
+
+    <menuitem id="menu_approval_workflows_all" 
+              name="All Workflows" 
+              parent="menu_approval_workflows" 
+              action="action_approval_workflow" 
+              sequence="10"/>
+
+    <menuitem id="menu_approval_workflows_my" 
+              name="My Workflows" 
+              parent="menu_approval_workflows" 
+              action="action_approval_workflow" 
+              sequence="20"/>
+
+    <menuitem id="menu_approval_workflows_pending" 
+              name="Pending My Approval" 
+              parent="menu_approval_workflows" 
+              action="action_approval_workflow" 
+              sequence="30"/>
+
+    <menuitem id="menu_approval_workflows_dashboard" 
+              name="Dashboard" 
+              parent="menu_approval_workflows" 
+              action="action_approval_dashboard" 
+              sequence="40"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_approval_config" 
+              name="Configuration" 
+              parent="menu_approval_main" 
+              sequence="20"/>
+
+    <menuitem id="menu_approval_matrices" 
+              name="Approval Matrices" 
+              parent="menu_approval_config" 
+              action="action_multi_matrix" 
+              sequence="10"/>
+
+    <menuitem id="menu_dynamic_users" 
+              name="Dynamic Users" 
+              parent="menu_approval_config" 
+              action="action_dynamic_user" 
+              sequence="20"/>
+
+    <!-- Notifications -->
+    <menuitem id="menu_approval_notifications" 
+              name="Notifications" 
+              parent="menu_approval_main" 
+              sequence="30"/>
+
+    <menuitem id="menu_notification_templates" 
+              name="Templates" 
+              parent="menu_approval_notifications" 
+              action="action_notification_template" 
+              sequence="10"/>
+
+    <menuitem id="menu_notification_logs" 
+              name="Logs" 
+              parent="menu_approval_notifications" 
+              action="action_notification_log" 
+              sequence="20"/>
+
+    <menuitem id="menu_email_services" 
+              name="Email Services" 
+              parent="menu_approval_notifications" 
+              action="action_email_service" 
+              sequence="30"/>
+
+    <!-- Reports -->
+    <menuitem id="menu_approval_reports" 
+              name="Reports" 
+              parent="menu_approval_main" 
+              sequence="40"/>
+
+    <menuitem id="menu_approval_reports_workflow" 
+              name="Workflow Reports" 
+              parent="menu_approval_reports" 
+              action="action_approval_workflow_report" 
+              sequence="10"/>
+
+    <menuitem id="menu_approval_reports_approval" 
+              name="Approval Reports" 
+              parent="menu_approval_reports" 
+              action="action_approval_report" 
+              sequence="20"/>
+
+    <menuitem id="menu_approval_reports_notification" 
+              name="Notification Reports" 
+              parent="menu_approval_reports" 
+              action="action_notification_report" 
+              sequence="30"/>
+
+    <!-- Settings -->
+    <menuitem id="menu_approval_settings" 
+              name="Settings" 
+              parent="menu_approval_main" 
+              sequence="50"/>
+
+    <menuitem id="menu_approval_settings_general" 
+              name="General Settings" 
+              parent="menu_approval_settings" 
+              action="action_approval_settings" 
+              sequence="10"/>
+
+    <menuitem id="menu_approval_settings_email" 
+              name="Email Settings" 
+              parent="menu_approval_settings" 
+              action="action_email_settings" 
+              sequence="20"/>
+
+    <menuitem id="menu_approval_settings_security" 
+              name="Security Settings" 
+              parent="menu_approval_settings" 
+              action="action_security_settings" 
+              sequence="30"/>
+
+    <!-- Quick Actions -->
+    <menuitem id="menu_approval_quick" 
+              name="Quick Actions" 
+              parent="menu_approval_main" 
+              sequence="60"/>
+
+    <menuitem id="menu_approval_quick_create" 
+              name="Create Workflow" 
+              parent="menu_approval_quick" 
+              action="action_approval_workflow" 
+              sequence="10"/>
+
+    <menuitem id="menu_approval_quick_approve" 
+              name="Pending Approvals" 
+              parent="menu_approval_quick" 
+              action="action_approval_workflow" 
+              sequence="20"/>
+
+    <menuitem id="menu_approval_quick_dashboard" 
+              name="Dashboard" 
+              parent="menu_approval_quick" 
+              action="action_approval_dashboard" 
+              sequence="30"/>
+
+</odoo>

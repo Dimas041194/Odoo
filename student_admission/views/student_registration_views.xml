@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Kanban View -->
+    <record id="view_student_registration_kanban" model="ir.ui.view">
+      <field name="name">student.registration.kanban</field>
+      <field name="model">student.registration</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="state"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div>
+                <strong><field name="name"/></strong>
+                <div>Status: <field name="state"/></div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Form View dengan Workflow Tombol -->
+    <record id="view_student_registration_form" model="ir.ui.view">
+      <field name="name">student.registration.form</field>
+      <field name="model">student.registration</field>
+      <field name="arch" type="xml">
+       <form>
+  <header>
+    <button name="action_mark_as_paid" string="Sudah Bayar" type="object"/>
+    <button name="action_verify_documents" string="Verifikasi Dokumen" type="object"/>
+    <button name="action_pass_test" string="Lulus Tes" type="object"/>
+    <button name="action_accept" string="Terima" type="object"/>
+    <button name="action_reject" string="Tolak" type="object"/>
+  </header>
+  <sheet>
+    <group>
+      <field name="name"/>
+      <field name="nik"/>
+      <field name="address"/>
+      <field name="email"/>
+      <field name="state" readonly="1"/>
+      <field name="photo" widget="image"/>
+      <field name="documents" widget="binary"/>
+      <field name="payment_proof" widget="binary"/>
+      <field name="test_score"/>
+    </group>
+  </sheet>
+</form>
+      </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="action_student_registration" model="ir.actions.act_window">
+      <field name="name">Student Registrations</field>
+      <field name="res_model">student.registration</field>
+      <field name="view_mode">kanban,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_student_root" name="Student Admission" sequence="10"/>
+    <menuitem id="menu_student_registration" name="Pendaftaran Siswa"
+      parent="menu_student_root" action="action_student_registration" sequence="1"/>
+  </data>
+</odoo>

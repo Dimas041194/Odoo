@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Budget Notification Templates -->
+    <record id="template_overbudget_alert" model="budget.notification.template">
+        <field name="name">Overbudget Alert</field>
+        <field name="template_type">overbudget_alert</field>
+        <field name="recipient_type">budget_manager</field>
+        <field name="subject">Overbudget Alert: {{budget.name}}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #dc3545;">Overbudget Alert</h2>
+                <p>Dear Manager,</p>
+                <p>An overbudget situation has been detected in the budget system.</p>
+                
+                <div style="background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;">
+                    <h3 style="margin-top: 0; color: #721c24;">Budget Details</h3>
+                    <p><strong>Budget:</strong> {{budget.name}}</p>
+                    <p><strong>Department:</strong> {{budget.department}}</p>
+                    <p><strong>Total Budget:</strong> {{budget.total_budget}} {{budget.currency}}</p>
+                    <p><strong>Committed Amount:</strong> {{budget.committed_amount}} {{budget.currency}}</p>
+                    <p><strong>Available Amount:</strong> {{budget.available_amount}} {{budget.currency}}</p>
+                    <p><strong>Overbudget Amount:</strong> {{alert.amount}} {{budget.currency}}</p>
+                    <p><strong>Module:</strong> {{alert.module_name}}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{budget.budget_id}}&model=budget.management&view_type=form" 
+                       style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Budget
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated alert from the Budget Management System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Overbudget Alert: {{budget.name}}
+
+Dear Manager,
+
+An overbudget situation has been detected in the budget system.
+
+Budget Details:
+- Budget: {{budget.name}}
+- Department: {{budget.department}}
+- Total Budget: {{budget.total_budget}} {{budget.currency}}
+- Committed Amount: {{budget.committed_amount}} {{budget.currency}}
+- Available Amount: {{budget.available_amount}} {{budget.currency}}
+- Overbudget Amount: {{alert.amount}} {{budget.currency}}
+- Module: {{alert.module_name}}
+
+Please review the budget and take appropriate action.
+
+This is an automated alert from the Budget Management System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+    </record>
+
+    <record id="template_threshold_warning" model="budget.notification.template">
+        <field name="name">Budget Warning</field>
+        <field name="template_type">threshold_warning</field>
+        <field name="recipient_type">budget_manager</field>
+        <field name="subject">Budget Warning: {{budget.name}} - {{budget.utilization_percentage}}% utilized</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #ffc107;">Budget Warning</h2>
+                <p>Dear Manager,</p>
+                <p>A budget threshold has been reached.</p>
+                
+                <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                    <h3 style="margin-top: 0; color: #856404;">Budget Details</h3>
+                    <p><strong>Budget:</strong> {{budget.name}}</p>
+                    <p><strong>Department:</strong> {{budget.department}}</p>
+                    <p><strong>Total Budget:</strong> {{budget.total_budget}} {{budget.currency}}</p>
+                    <p><strong>Committed Amount:</strong> {{budget.committed_amount}} {{budget.currency}}</p>
+                    <p><strong>Utilization:</strong> {{budget.utilization_percentage}}%</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{budget.budget_id}}&model=budget.management&view_type=form" 
+                       style="background-color: #ffc107; color: #212529; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Budget
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated warning from the Budget Management System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Budget Warning: {{budget.name}} - {{budget.utilization_percentage}}% utilized
+
+Dear Manager,
+
+A budget threshold has been reached.
+
+Budget Details:
+- Budget: {{budget.name}}
+- Department: {{budget.department}}
+- Total Budget: {{budget.total_budget}} {{budget.currency}}
+- Committed Amount: {{budget.committed_amount}} {{budget.currency}}
+- Utilization: {{budget.utilization_percentage}}%
+
+Please review the budget and consider taking action.
+
+This is an automated warning from the Budget Management System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+        <field name="threshold_percentage_min">80</field>
+        <field name="threshold_percentage_max">95</field>
+    </record>
+
+    <record id="template_threshold_danger" model="budget.notification.template">
+        <field name="name">Budget Danger</field>
+        <field name="template_type">threshold_danger</field>
+        <field name="recipient_type">budget_manager</field>
+        <field name="subject">Budget Danger: {{budget.name}} - {{budget.utilization_percentage}}% utilized</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #fd7e14;">Budget Danger</h2>
+                <p>Dear Manager,</p>
+                <p>A critical budget threshold has been reached.</p>
+                
+                <div style="background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #fd7e14;">
+                    <h3 style="margin-top: 0; color: #721c24;">Budget Details</h3>
+                    <p><strong>Budget:</strong> {{budget.name}}</p>
+                    <p><strong>Department:</strong> {{budget.department}}</p>
+                    <p><strong>Total Budget:</strong> {{budget.total_budget}} {{budget.currency}}</p>
+                    <p><strong>Committed Amount:</strong> {{budget.committed_amount}} {{budget.currency}}</p>
+                    <p><strong>Utilization:</strong> {{budget.utilization_percentage}}%</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{budget.budget_id}}&model=budget.management&view_type=form" 
+                       style="background-color: #fd7e14; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Budget
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated danger alert from the Budget Management System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Budget Danger: {{budget.name}} - {{budget.utilization_percentage}}% utilized
+
+Dear Manager,
+
+A critical budget threshold has been reached.
+
+Budget Details:
+- Budget: {{budget.name}}
+- Department: {{budget.department}}
+- Total Budget: {{budget.total_budget}} {{budget.currency}}
+- Committed Amount: {{budget.committed_amount}} {{budget.currency}}
+- Utilization: {{budget.utilization_percentage}}%
+
+Please take immediate action to review the budget.
+
+This is an automated danger alert from the Budget Management System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+        <field name="threshold_percentage_min">95</field>
+        <field name="threshold_percentage_max">100</field>
+    </record>
+
+    <record id="template_threshold_critical" model="budget.notification.template">
+        <field name="name">Budget Critical</field>
+        <field name="template_type">threshold_critical</field>
+        <field name="recipient_type">budget_manager</field>
+        <field name="subject">Budget Critical: {{budget.name}} - {{budget.utilization_percentage}}% utilized</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #dc3545;">Budget Critical</h2>
+                <p>Dear Manager,</p>
+                <p>A critical budget threshold has been exceeded.</p>
+                
+                <div style="background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;">
+                    <h3 style="margin-top: 0; color: #721c24;">Budget Details</h3>
+                    <p><strong>Budget:</strong> {{budget.name}}</p>
+                    <p><strong>Department:</strong> {{budget.department}}</p>
+                    <p><strong>Total Budget:</strong> {{budget.total_budget}} {{budget.currency}}</p>
+                    <p><strong>Committed Amount:</strong> {{budget.committed_amount}} {{budget.currency}}</p>
+                    <p><strong>Utilization:</strong> {{budget.utilization_percentage}}%</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{budget.budget_id}}&model=budget.management&view_type=form" 
+                       style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Budget
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated critical alert from the Budget Management System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Budget Critical: {{budget.name}} - {{budget.utilization_percentage}}% utilized
+
+Dear Manager,
+
+A critical budget threshold has been exceeded.
+
+Budget Details:
+- Budget: {{budget.name}}
+- Department: {{budget.department}}
+- Total Budget: {{budget.total_budget}} {{budget.currency}}
+- Committed Amount: {{budget.committed_amount}} {{budget.currency}}
+- Utilization: {{budget.utilization_percentage}}%
+
+IMMEDIATE ACTION REQUIRED: Please review the budget and take corrective action.
+
+This is an automated critical alert from the Budget Management System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+        <field name="threshold_percentage_min">100</field>
+    </record>
+
+    <!-- Default Budget Matrix -->
+    <record id="default_budget_matrix" model="multi.matrix">
+        <field name="name">Budget Approval Matrix</field>
+        <field name="description">Default approval matrix for budget management</field>
+        <field name="matrix_type">amount</field>
+        <field name="min_amount">0</field>
+        <field name="max_amount">1000000</field>
+        <field name="state">active</field>
+    </record>
+
+    <!-- Budget Approval Levels -->
+    <record id="budget_approval_level_1" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_budget_matrix"/>
+        <field name="name">Manager Approval</field>
+        <field name="level_sequence">1</field>
+        <field name="approval_type">single</field>
+        <field name="condition_amount_min">0</field>
+        <field name="condition_amount_max">10000</field>
+        <field name="timeout_hours">24</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+    <record id="budget_approval_level_2" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_budget_matrix"/>
+        <field name="name">Finance Director Approval</field>
+        <field name="level_sequence">2</field>
+        <field name="approval_type">single</field>
+        <field name="condition_amount_min">10000</field>
+        <field name="condition_amount_max">100000</field>
+        <field name="timeout_hours">48</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+    <record id="budget_approval_level_3" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_budget_matrix"/>
+        <field name="name">CEO Approval</field>
+        <field name="level_sequence">3</field>
+        <field name="approval_type">single</field>
+        <field name="condition_amount_min">100000</field>
+        <field name="timeout_hours">72</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+</odoo>

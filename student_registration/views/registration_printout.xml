@@ -1,0 +1,11 @@
+<template id="registration_printout" name="Cetak Bukti Pendaftaran">
+  <h2>Bukti Pendaftaran Siswa Baru</h2>
+  <table>
+    <tr><td><b>Nama Lengkap</b></td><td>: <t t-esc="student.name"/></td></tr>
+    <tr><td><b>NIK</b></td><td>: <t t-esc="student.nik"/></td></tr>
+    <tr><td><b>Alamat</b></td><td>: <t t-esc="student.address"/></td></tr>
+    <tr><td><b>Email</b></td><td>: <t t-esc="student.email"/></td></tr>
+  </table>
+  <br/>
+  <p>Silakan cetak halaman ini sebagai bukti pendaftaran!</p>
+</template>

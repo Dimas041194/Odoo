@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custom_purchase_request_user,custom.purchase.request user,model_custom_purchase_request,group_requester,1,1,1,0
+access_custom_purchase_request_line_user,custom.purchase.request.line user,model_custom_purchase_request_line,group_requester,1,1,1,0
+access_custom_approval_flow_user,custom.approval.flow user,model_custom_approval_flow,,1,0,0,0
+access_custom_approval_request_user,custom.approval.request user,model_custom_approval_request,,1,1,1,0
+access_purchase_order_user,purchase.order user,model_purchase_order,group_purchase_manager,1,1,1,0

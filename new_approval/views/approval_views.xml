@@ -1,0 +1,26 @@
+<odoo>
+    <record id="view_form_new_approval_request" model="ir.ui.view">
+        <field name="name">x.new.approval.request.form</field>
+        <field name="model">x.new.approval.request</field>
+        <field name="arch" type="xml">
+            <form string="New Approval Request">
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="model_name" readonly="1"/>
+                        <field name="record_id" readonly="1"/>
+                        <field name="current_level" readonly="1"/>
+                        <field name="max_level" readonly="1"/>
+                        <field name="approver_ids" readonly="1"/>
+                        <field name="status" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_approve" string="Approve" type="object" class="btn-primary" attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                        <button name="action_reject" string="Reject" type="object" class="btn-danger" attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                        <button string="Close" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

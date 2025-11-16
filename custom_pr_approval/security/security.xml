@@ -1,0 +1,22 @@
+<odoo>
+    <record id="group_requester" model="res.groups">
+        <field name="name">Purchase Requester</field>
+        <field name="category_id" ref="base.module_category_purchases"/>
+    </record>
+    <record id="group_approver_level_1" model="res.groups">
+        <field name="name">Approver Level 1</field>
+        <field name="category_id" ref="base.module_category_purchases"/>
+    </record>
+    <record id="group_approver_level_2" model="res.groups">
+        <field name="name">Approver Level 2</field>
+        <field name="category_id" ref="base.module_category_purchases"/>
+    </record>
+    <record id="group_approver_level_3" model="res.groups">
+        <field name="name">Approver Level 3</field>
+        <field name="category_id" ref="base.module_category_purchases"/>
+    </record>
+    <record id="group_purchase_manager" model="res.groups">
+        <field name="name">Purchase Manager</field>
+        <field name="category_id" ref="base.module_category_purchases"/>
+    </record>
+</odoo>

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Budget Management Report -->
+    <record id="action_budget_management_report" model="ir.actions.report">
+        <field name="name">Budget Management Report</field>
+        <field name="model">budget.management</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_management.report_budget</field>
+        <field name="report_file">budget_management.report_budget</field>
+        <field name="binding_model_id" ref="model_budget_management"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Budget Report Template -->
+    <template id="report_budget">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="budget">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Budget Management Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Budget Name:</strong></td>
+                                        <td><t t-esc="budget.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Budget Code:</strong></td>
+                                        <td><t t-esc="budget.code"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fiscal Year:</strong></td>
+                                        <td><t t-esc="budget.fiscal_year.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Department:</strong></td>
+                                        <td><t t-esc="budget.department_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="budget.state"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Total Budget:</strong></td>
+                                        <td><t t-esc="budget.total_budget"/> <t t-esc="budget.currency_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Committed Amount:</strong></td>
+                                        <td><t t-esc="budget.committed_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Actual Amount:</strong></td>
+                                        <td><t t-esc="budget.actual_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Available Amount:</strong></td>
+                                        <td><t t-esc="budget.available_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Utilization %:</strong></td>
+                                        <td><t t-esc="budget.utilization_percentage"/>%</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Budget Period</h3>
+                                <p><strong>From:</strong> <t t-esc="budget.date_from"/> <strong>To:</strong> <t t-esc="budget.date_to"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Description</h3>
+                                <p><t t-esc="budget.description or ''"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Budget Lines</h3>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Account</th>
+                                            <th>Analytic Account</th>
+                                            <th>Planned Amount</th>
+                                            <th>Committed Amount</th>
+                                            <th>Actual Amount</th>
+                                            <th>Available Amount</th>
+                                            <th>Variance</th>
+                                            <th>Variance %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="budget.budget_line_ids" t-as="line">
+                                            <tr>
+                                                <td><t t-esc="line.account_id.name"/></td>
+                                                <td><t t-esc="line.analytic_account_id.name or ''"/></td>
+                                                <td><t t-esc="line.planned_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="line.committed_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="line.actual_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="line.available_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="line.variance_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="line.variance_percentage"/>%</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Budget Commitments</h3>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Amount</th>
+                                            <th>Description</th>
+                                            <th>Module</th>
+                                            <th>Record</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="budget.commitment_ids" t-as="commitment">
+                                            <tr>
+                                                <td><t t-esc="commitment.amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                                <td><t t-esc="commitment.description or ''"/></td>
+                                                <td><t t-esc="commitment.module_name"/></td>
+                                                <td><t t-esc="commitment.record_name"/></td>
+                                                <td><t t-esc="commitment.commitment_date"/></td>
+                                                <td><t t-esc="commitment.state"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Budget Commitment Report -->
+    <record id="action_budget_commitment_report" model="ir.actions.report">
+        <field name="name">Budget Commitment Report</field>
+        <field name="model">budget.commitment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_management.report_commitment</field>
+        <field name="report_file">budget_management.report_commitment</field>
+        <field name="binding_model_id" ref="model_budget_commitment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Budget Commitment Report Template -->
+    <template id="report_commitment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="commitment">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Budget Commitment Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Budget:</strong></td>
+                                        <td><t t-esc="commitment.budget_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Budget Line:</strong></td>
+                                        <td><t t-esc="commitment.budget_line_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amount:</strong></td>
+                                        <td><t t-esc="commitment.amount"/> <t t-esc="commitment.currency_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="commitment.state"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Module:</strong></td>
+                                        <td><t t-esc="commitment.module_name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Record:</strong></td>
+                                        <td><t t-esc="commitment.record_name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Commitment Date:</strong></td>
+                                        <td><t t-esc="commitment.commitment_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Confirmed Date:</strong></td>
+                                        <td><t t-esc="commitment.confirmed_date or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Description</h3>
+                                <p><t t-esc="commitment.description or 'No description provided'"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Budget Alert Report -->
+    <record id="action_budget_alert_report" model="ir.actions.report">
+        <field name="name">Budget Alert Report</field>
+        <field name="model">budget.alert</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_management.report_alert</field>
+        <field name="report_file">budget_management.report_alert</field>
+        <field name="binding_model_id" ref="model_budget_alert"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Budget Alert Report Template -->
+    <template id="report_alert">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="alert">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Budget Alert Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Budget:</strong></td>
+                                        <td><t t-esc="alert.budget_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Alert Type:</strong></td>
+                                        <td><t t-esc="alert.alert_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Threshold %:</strong></td>
+                                        <td><t t-esc="alert.threshold_percentage"/>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amount:</strong></td>
+                                        <td><t t-esc="alert.amount"/> <t t-esc="alert.currency_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Alert Date:</strong></td>
+                                        <td><t t-esc="alert.alert_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="alert.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Module:</strong></td>
+                                        <td><t t-esc="alert.module_name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Record:</strong></td>
+                                        <td><t t-esc="alert.record_name or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Alert Message</h3>
+                                <p><t t-esc="alert.message"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16" t-if="alert.resolution_notes">
+                            <div class="col-12">
+                                <h3>Resolution Notes</h3>
+                                <p><t t-esc="alert.resolution_notes"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Budget Dashboard Report -->
+    <record id="action_budget_dashboard_report" model="ir.actions.report">
+        <field name="name">Budget Dashboard Report</field>
+        <field name="model">budget.management</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_management.report_dashboard</field>
+        <field name="report_file">budget_management.report_dashboard</field>
+        <field name="binding_model_id" ref="model_budget_management"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Budget Dashboard Report Template -->
+    <template id="report_dashboard">
+        <t t-call="web.html_container">
+            <div class="page">
+                <div class="oe_structure"/>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Budget Dashboard Report</h2>
+                        <p>Generated on: <t t-esc="context_timestamp(datetime.datetime.now())"/></p>
+                    </div>
+                </div>
+                
+                <!-- Budget Summary -->
+                <div class="row mt16">
+                    <div class="col-12">
+                        <h3>Budget Summary</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Budget Name</th>
+                                    <th>Department</th>
+                                    <th>Total Budget</th>
+                                    <th>Committed</th>
+                                    <th>Actual</th>
+                                    <th>Available</th>
+                                    <th>Utilization %</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="budget">
+                                    <tr>
+                                        <td><t t-esc="budget.name"/></td>
+                                        <td><t t-esc="budget.department_id.name or ''"/></td>
+                                        <td><t t-esc="budget.total_budget"/> <t t-esc="budget.currency_id.name"/></td>
+                                        <td><t t-esc="budget.committed_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                        <td><t t-esc="budget.actual_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                        <td><t t-esc="budget.available_amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                        <td><t t-esc="budget.utilization_percentage"/>%</td>
+                                        <td><t t-esc="budget.state"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Overbudget Summary -->
+                <div class="row mt16">
+                    <div class="col-12">
+                        <h3>Overbudget Summary</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Budget Name</th>
+                                    <th>Overbudget Amount</th>
+                                    <th>Overbudget %</th>
+                                    <th>Alert Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="budget">
+                                    <tr t-if="budget.committed_amount > budget.total_budget">
+                                        <td><t t-esc="budget.name"/></td>
+                                        <td><t t-esc="budget.committed_amount - budget.total_budget"/> <t t-esc="budget.currency_id.name"/></td>
+                                        <td><t t-esc="((budget.committed_amount - budget.total_budget) / budget.total_budget * 100) if budget.total_budget > 0 else 0"/>%</td>
+                                        <td><t t-esc="budget.overbudget_count"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Top Commitments -->
+                <div class="row mt16">
+                    <div class="col-12">
+                        <h3>Top Commitments</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Budget</th>
+                                    <th>Amount</th>
+                                    <th>Module</th>
+                                    <th>Record</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="budget">
+                                    <t t-foreach="budget.commitment_ids[:10]" t-as="commitment">
+                                        <tr>
+                                            <td><t t-esc="budget.name"/></td>
+                                            <td><t t-esc="commitment.amount"/> <t t-esc="budget.currency_id.name"/></td>
+                                            <td><t t-esc="commitment.module_name"/></td>
+                                            <td><t t-esc="commitment.record_name"/></td>
+                                            <td><t t-esc="commitment.commitment_date"/></td>
+                                            <td><t t-esc="commitment.state"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+</odoo>

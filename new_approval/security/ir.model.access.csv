@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_new_approval_request,x.new.approval.request,model_x_new_approval_request,,1,1,1,1

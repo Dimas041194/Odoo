@@ -1,0 +1,57 @@
+<odoo>
+    <record id="view_purchase_request_tree" model="ir.ui.view">
+        <field name="name">custom.purchase.request.tree</field>
+        <field name="model">custom.purchase.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="date_request"/>
+                <field name="amount_total"/>
+                <field name="approval_state"/>
+                <field name="purchase_order_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_form" model="ir.ui.view">
+        <field name="name">custom.purchase.request.form</field>
+        <field name="model">custom.purchase.request</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Request">
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="date_request"/>
+                        <field name="approval_state" readonly="1"/>
+                        <field name="purchase_order_id" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="product_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="action_request_approval" type="object" string="Request Approval"
+                                attrs="{'invisible': [('approval_state', '!=', 'draft')]}" class="oe_highlight"/>
+                        <button name="action_create_po" type="object" string="Create Purchase Order"
+                                attrs="{'invisible': [('approval_state', '!=', 'approved')]}" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+</odoo>

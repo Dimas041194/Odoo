@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="email_template_pr_approval" model="mail.template">
+    <field name="name">Purchase Request Approval Notification</field>
+    <field name="model_id" ref="model_pr_purchase_request"/>
+    <field name="subject">[PR] Approval Needed: ${object.name}</field>
+    <field name="email_from">${(user.email or '')|safe}</field>
+    <field name="body_html"><![CDATA[
+      <p>Purchase Request <b>${object.name}</b> menunggu persetujuan Anda.</p>
+      <p>Total nilai: ${object.total_amount}</p>
+    ]]></field>
+  </record>
+
+  <record id="email_template_po_created" model="mail.template">
+    <field name="name">Purchase Order Created Notification</field>
+    <field name="model_id" ref="model_pr_purchase_request"/>
+    <field name="subject">[PO] Purchase Order Created: ${object.po_id.name}</field>
+    <field name="email_from">${(user.email or '')|safe}</field>
+    <field name="body_html"><![CDATA[
+      <p>PO telah dibuat dari Purchase Request <b>${object.name}</b>.</p>
+      <p>Nomor PO: ${object.po_id.name}</p>
+    ]]></field>
+  </record>
+</odoo>

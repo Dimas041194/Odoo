@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <template id="student_registration_form" name="Formulir Pendaftaran Siswa">
+      <t t-call="website.layout">
+        <div class="container mt-5">
+          <h2 class="mb-4">Formulir Pendaftaran Siswa</h2>
+          <form action="/student/registration" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+            <!-- CSRF Token -->
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+            <!-- Nama Lengkap -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Lengkap" required="required"/>
+              <div class="invalid-feedback">Mohon masukkan nama lengkap.</div>
+            </div>
+
+            <!-- NIK -->
+            <div class="mb-3">
+              <label for="nik" class="form-label">NIK <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="nik" name="nik" placeholder="Masukkan NIK" required="required"/>
+              <div class="invalid-feedback">Mohon masukkan NIK.</div>
+            </div>
+
+            <!-- Alamat -->
+            <div class="mb-3">
+              <label for="address" class="form-label">Alamat <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="address" name="address" rows="3" placeholder="Masukkan Alamat" required="required"></textarea>
+              <div class="invalid-feedback">Mohon masukkan alamat.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email"/>
+            </div>
+
+            <!-- Foto Siswa -->
+            <div class="mb-3">
+              <label for="photo" class="form-label">Foto Siswa</label>
+              <input class="form-control" type="file" id="photo" name="photo" accept="image/*"/>
+              <div class="form-text">Format JPEG/PNG. Maksimum 2 MB.</div>
+            </div>
+
+            <!-- Upload Dokumen -->
+            <div class="mb-3">
+              <label for="documents" class="form-label">Upload Dokumen</label>
+              <input class="form-control" type="file" id="documents" name="documents" accept="application/pdf"/>
+              <div class="form-text">File PDF, maks. 2 MB.</div>
+            </div>
+
+            <!-- Tombol Submit -->
+            <button type="submit" class="btn btn-primary">Daftar Sekarang</button>
+          </form>
+        </div>
+        <!-- Bootstrap Client-Side Validation -->
+        <script>
+          (() => {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(form => {
+              form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+              }, false)
+            })
+          })()
+        </script>
+      </t>
+    </template>
+  </data>
+</odoo>

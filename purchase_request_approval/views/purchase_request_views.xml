@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- List view -->
+  <record id="view_pr_purchase_request_list" model="ir.ui.view">
+    <field name="name">pr.purchase.request.list</field>
+    <field name="model">pr.purchase.request</field>
+    <field name="arch" type="xml">
+      <list string="Purchase Requests">
+        <field name="name"/>
+        <field name="requester_id"/>
+        <field name="partner_id"/>
+        <field name="date_request"/>
+        <field name="total_amount"/>
+        <field name="current_approval_rule_id" string="Approval Rule"/>
+        <field name="state" string="Approval Status"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- Form view -->
+  <record id="view_pr_purchase_request_form" model="ir.ui.view">
+    <field name="name">pr.purchase.request.form</field>
+    <field name="model">pr.purchase.request</field>
+    <field name="arch" type="xml">
+      <form string="Purchase Request">
+        <header>
+          <button name="action_submit" string="Submit" type="object" class="oe_highlight"/>
+          <button name="action_approve" string="Approve" type="object" groups="purchase_request_approval.group_purchase_request_approver"/>
+          <button name="action_reject" string="Reject" type="object" groups="purchase_request_approval.group_purchase_request_approver"/>
+          <button name="action_create_po" string="Create PO" type="object" groups="purchase.group_purchase_manager"/>
+          <button string="Cancel" special="cancel"/>
+          <button name="action_reset_draft" string="Reset to Draft" type="object"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,waiting_approval,approved,rejected,po_created"/>
+        </header>
+        <sheet>
+          <group>
+            <field name="name" readonly="1"/>
+            <field name="requester_id" readonly="1"/>
+            <field name="partner_id"/>
+            <field name="date_request"/>
+            <field name="total_amount" readonly="1"/>
+            <field name="approval_level" readonly="1"/>
+            <field name="current_approval_rule_id" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="Request Lines">
+              <field name="line_ids">
+                <list editable="bottom">
+                  <field name="product_id"/>
+                  <field name="product_qty"/>
+                  <field name="product_uom"/>
+                  <field name="price_unit"/>
+                </list>
+              </field>
+            </page>
+
+            <page string="Approval Status">
+              <field name="approval_status_ids">
+                <list>
+                  <field name="user_id"/>
+                  <field name="status"/>
+                  <field name="date"/>
+                </list>
+              </field>
+              <field name="next_approval_user_id" readonly="1"/>
+            </page>
+          </notebook>
+        </sheet>
+        <!-- Add chatter for activities and messages -->
+        <div class="oe_chatter" widget="mail.thread"/>
+      </form>
+    </field>
+  </record>
+</odoo>

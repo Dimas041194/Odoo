@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="group_approval_manager" model="res.groups">
+        <field name="name">Approval Manager</field>
+        <field name="category_id" ref="base.module_category_administration"/>
+        <field name="comment">Can manage approval matrices, users, and workflows</field>
+    </record>
+
+    <record id="group_approval_user" model="res.groups">
+        <field name="name">Approval User</field>
+        <field name="category_id" ref="base.module_category_administration"/>
+        <field name="comment">Can create and manage their own approval workflows</field>
+    </record>
+
+    <record id="group_approval_approver" model="res.groups">
+        <field name="name">Approval Approver</field>
+        <field name="category_id" ref="base.module_category_administration"/>
+        <field name="comment">Can approve workflows assigned to them</field>
+    </record>
+
+    <record id="group_notification_manager" model="res.groups">
+        <field name="name">Notification Manager</field>
+        <field name="category_id" ref="base.module_category_administration"/>
+        <field name="comment">Can manage notification templates and email services</field>
+    </record>
+
+    <!-- Record Rules -->
+    
+    <!-- Multi Matrix Rules -->
+    <record id="multi_matrix_rule_manager" model="ir.rule">
+        <field name="name">Multi Matrix: Manager Access</field>
+        <field name="model_id" ref="model_multi_matrix"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="multi_matrix_rule_user" model="ir.rule">
+        <field name="name">Multi Matrix: User Access</field>
+        <field name="model_id" ref="model_multi_matrix"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Dynamic User Rules -->
+    <record id="dynamic_user_rule_manager" model="ir.rule">
+        <field name="name">Dynamic User: Manager Access</field>
+        <field name="model_id" ref="model_dynamic_user"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="dynamic_user_rule_user" model="ir.rule">
+        <field name="name">Dynamic User: User Access</field>
+        <field name="model_id" ref="model_dynamic_user"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Approval Workflow Rules -->
+    <record id="approval_workflow_rule_manager" model="ir.rule">
+        <field name="name">Approval Workflow: Manager Access</field>
+        <field name="model_id" ref="model_approval_workflow"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="approval_workflow_rule_user" model="ir.rule">
+        <field name="name">Approval Workflow: User Access</field>
+        <field name="model_id" ref="model_approval_workflow"/>
+        <field name="domain_force">['|', ('requester_id', '=', user.id), ('approval_ids.approver_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="approval_workflow_rule_approver" model="ir.rule">
+        <field name="name">Approval Workflow: Approver Access</field>
+        <field name="model_id" ref="model_approval_workflow"/>
+        <field name="domain_force">['|', ('requester_id', '=', user.id), ('approval_ids.approver_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_approver'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Approval Workflow Approval Rules -->
+    <record id="approval_workflow_approval_rule_manager" model="ir.rule">
+        <field name="name">Approval Workflow Approval: Manager Access</field>
+        <field name="model_id" ref="model_approval_workflow_approval"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="approval_workflow_approval_rule_approver" model="ir.rule">
+        <field name="name">Approval Workflow Approval: Approver Access</field>
+        <field name="model_id" ref="model_approval_workflow_approval"/>
+        <field name="domain_force">['|', ('approver_id.user_id', '=', user.id), ('delegated_to_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_approver'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Notification Template Rules -->
+    <record id="notification_template_rule_manager" model="ir.rule">
+        <field name="name">Notification Template: Manager Access</field>
+        <field name="model_id" ref="model_notification_template"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="notification_template_rule_user" model="ir.rule">
+        <field name="name">Notification Template: User Access</field>
+        <field name="model_id" ref="model_notification_template"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Notification Log Rules -->
+    <record id="notification_log_rule_manager" model="ir.rule">
+        <field name="name">Notification Log: Manager Access</field>
+        <field name="model_id" ref="model_notification_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="notification_log_rule_user" model="ir.rule">
+        <field name="name">Notification Log: User Access</field>
+        <field name="model_id" ref="model_notification_log"/>
+        <field name="domain_force">[('recipient_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Email Service Rules -->
+    <record id="email_service_rule_manager" model="ir.rule">
+        <field name="name">Email Service: Manager Access</field>
+        <field name="model_id" ref="model_email_service"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="email_service_rule_user" model="ir.rule">
+        <field name="name">Email Service: User Access</field>
+        <field name="model_id" ref="model_email_service"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Email Log Rules -->
+    <record id="email_log_rule_manager" model="ir.rule">
+        <field name="name">Email Log: Manager Access</field>
+        <field name="model_id" ref="model_email_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="email_log_rule_user" model="ir.rule">
+        <field name="name">Email Log: User Access</field>
+        <field name="model_id" ref="model_email_log"/>
+        <field name="domain_force">[('to_emails', 'ilike', user.email)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Notification Queue Rules -->
+    <record id="notification_queue_rule_manager" model="ir.rule">
+        <field name="name">Notification Queue: Manager Access</field>
+        <field name="model_id" ref="model_notification_queue"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="notification_queue_rule_user" model="ir.rule">
+        <field name="name">Notification Queue: User Access</field>
+        <field name="model_id" ref="model_notification_queue"/>
+        <field name="domain_force">[('workflow_id.requester_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Email Template Rules -->
+    <record id="email_template_rule_manager" model="ir.rule">
+        <field name="name">Email Template: Manager Access</field>
+        <field name="model_id" ref="model_email_template"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_notification_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="email_template_rule_user" model="ir.rule">
+        <field name="name">Email Template: User Access</field>
+        <field name="model_id" ref="model_email_template"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

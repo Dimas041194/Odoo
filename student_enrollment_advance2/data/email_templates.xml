@@ -1,0 +1,17 @@
+<odoo>
+  <data noupdate="1">
+    <record id="email_template_enrollment_confirmation" model="mail.template">
+      <field name="name">Enrollment Confirmation</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="subject">Pendaftaran Anda telah berhasil - NIK ${object.nik}</field>
+      <field name="email_from">${(user.email or 'noreply@yourdomain.com')|safe}</field>
+      <field name="email_to">${object.email|safe}</field>
+      <field name="body_html"><![CDATA[
+          <p>Yth. ${object.name},</p>
+          <p>Pendaftaran Anda telah diterima.<br/>NIK: <b>${object.nik}</b></p>
+          <p>Gunakan email ini sebagai bukti legal pendaftaran.<br/>Terima kasih.</p>
+      ]]></field>
+      <field name="auto_delete" eval="True"/>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Email konfirmasi pendaftaran siswa -->
+    <record id="email_template_confirmation" model="mail.template">
+      <field name="name">Konfirmasi Pendaftaran Siswa</field>
+      <field name="model_id" ref="model_student_registration"/>
+      <field name="subject">Konfirmasi Pendaftaran Siswa</field>
+      <field name="email_from">dimasaryonovantri04@gmail.com</field>
+      <field name="email_to"/>
+       <field name="body_html"><![CDATA[
+        <p>Kepada Yth.<br/>
+        Calon Peserta Didik,<br/><br/>
+        Dengan hormat,<br/>
+        Terima kasih atas pendaftaran online yang telah Anda lakukan. Berikut detail data Anda:</p>
+        <table cellpadding="4" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+          <tr><td><b>Nama Lengkap</b></td><td>: <t t-esc="object.name"/></td></tr>
+          <tr><td><b>NIK</b></td><td>: <t t-esc="object.nik"/></td></tr>
+          <tr><td><b>Alamat</b></td><td>: <t t-esc="object.address"/></td></tr>
+          <tr><td><b>Email</b></td><td>: <t t-esc="object.email or 'Tidak tersedia'"/></td></tr>
+        </table>
+        <br/>
+        <p>
+          Anda dapat mengunduh dokumen atau print formulir pendaftaran di sini:<br>
+          <a href="http://localhost:8069//student/registration/download/<t t-esc='object.id'/>">Download Dokumen</a><br>
+          <a href="https://yourdomain.com/student/registration/printout/<t t-esc='object.id'/>">Print Bukti Pendaftaran</a>
+        </p>
+        <p>Jika ada pertanyaan, silakan hubungi admin PPDB.<br/>
+        Hormat kami,<br/>
+        <b>Tim Pendaftaran Siswa Baru</b></p>
+  ]]></field>
+</record>
+
+    <!-- Email notifikasi admin -->
+    <record id="email_template_admin" model="mail.template">
+      <field name="name">Notifikasi Admin Pendaftaran Siswa</field>
+      <field name="model_id" ref="model_student_registration"/>
+      <field name="subject">Pendaftaran Siswa Baru</field>
+      <field name="email_from">dimasaryonovantri04@gmail.com</field>
+      <field name="email_to">dimasaryonovantri04@gmail.com</field>
+      <field name="body_html"><![CDATA[
+        <p>Telah terjadi pendaftaran siswa baru:</p>
+        <ul>
+          <li><b>Nama:</b> <t t-esc="object.name"/></li>
+          <li><b>NIK:</b> <t t-esc="object.nik"/></li>
+          <li><b>Alamat:</b> <t t-esc="object.address"/></li>
+          <li><b>Email:</b> <t t-esc="object.email or 'Tidak tersedia'"/></li>
+        </ul>
+      ]]></field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Multi Matrix Tree View -->
+    <record id="view_multi_matrix_tree" model="ir.ui.view">
+        <field name="name">multi.matrix.tree</field>
+        <field name="model">multi.matrix</field>
+        <field name="arch" type="xml">
+            <tree string="Approval Matrices" decoration-info="state=='draft'" decoration-success="state=='active'" decoration-muted="state=='archived'">
+                <field name="name"/>
+                <field name="matrix_type"/>
+                <field name="min_amount"/>
+                <field name="max_amount"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="level_count" string="Levels"/>
+                <field name="state" widget="badge" decoration-info="state=='draft'" decoration-success="state=='active'" decoration-muted="state=='archived'"/>
+                <field name="total_approvals" string="Total Approvals"/>
+                <field name="pending_approvals" string="Pending"/>
+                <field name="completed_approvals" string="Completed"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Multi Matrix Form View -->
+    <record id="view_multi_matrix_form" model="ir.ui.view">
+        <field name="name">multi.matrix.form</field>
+        <field name="model">multi.matrix</field>
+        <field name="arch" type="xml">
+            <form string="Approval Matrix">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_archive" string="Archive" type="object" class="btn-secondary" attrs="{'invisible': [('state', '!=', 'active')]}"/>
+                    <button name="action_duplicate" string="Duplicate" type="object" class="btn-info" attrs="{'invisible': [('state', 'in', ['archived'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Matrix Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="matrix_type"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="min_amount" attrs="{'invisible': [('matrix_type', 'not in', ['amount', 'hybrid'])]}"/>
+                            <field name="max_amount" attrs="{'invisible': [('matrix_type', 'not in', ['amount', 'hybrid'])]}"/>
+                            <field name="currency_id" attrs="{'invisible': [('matrix_type', 'not in', ['amount', 'hybrid'])]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    
+                    <!-- Department and Category Conditions -->
+                    <group attrs="{'invisible': [('matrix_type', 'not in', ['department', 'category', 'hybrid'])]}">
+                        <group>
+                            <field name="department_ids" attrs="{'invisible': [('matrix_type', 'not in', ['department', 'hybrid'])]}"/>
+                        </group>
+                        <group>
+                            <field name="category_ids" attrs="{'invisible': [('matrix_type', 'not in', ['category', 'hybrid'])]}"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Custom Conditions -->
+                    <group attrs="{'invisible': [('matrix_type', 'not in', ['custom', 'hybrid'])]}">
+                        <field name="conditions" widget="ace" options="{'mode': 'json'}" placeholder="Enter custom conditions in JSON format"/>
+                    </group>
+                    
+                    <!-- Approval Levels -->
+                    <notebook>
+                        <page string="Approval Levels" name="levels">
+                            <field name="approval_levels">
+                                <tree string="Approval Levels" editable="bottom">
+                                    <field name="level_sequence"/>
+                                    <field name="name"/>
+                                    <field name="approval_type"/>
+                                    <field name="approver_ids" widget="many2many_tags"/>
+                                    <field name="approver_groups" widget="many2many_tags"/>
+                                    <field name="required_approvals"/>
+                                    <field name="timeout_hours"/>
+                                    <field name="auto_approve"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group>
+                                    <field name="total_approvals" readonly="1"/>
+                                    <field name="pending_approvals" readonly="1"/>
+                                    <field name="completed_approvals" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="level_count" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Multi Matrix Search View -->
+    <record id="view_multi_matrix_search" model="ir.ui.view">
+        <field name="name">multi.matrix.search</field>
+        <field name="model">multi.matrix</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Matrices">
+                <field name="name"/>
+                <field name="matrix_type"/>
+                <field name="department_ids"/>
+                <field name="category_ids"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Archived" name="archived" domain="[('state', '=', 'archived')]"/>
+                <separator/>
+                <filter string="Amount Based" name="amount" domain="[('matrix_type', '=', 'amount')]"/>
+                <filter string="Department Based" name="department" domain="[('matrix_type', '=', 'department')]"/>
+                <filter string="Category Based" name="category" domain="[('matrix_type', '=', 'category')]"/>
+                <filter string="Custom" name="custom" domain="[('matrix_type', '=', 'custom')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Matrix Type" name="group_matrix_type" context="{'group_by': 'matrix_type'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Multi Matrix Action -->
+    <record id="action_multi_matrix" model="ir.actions.act_window">
+        <field name="name">Approval Matrices</field>
+        <field name="res_model">multi.matrix</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_multi_matrix_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first approval matrix!
+            </p>
+            <p>
+                Approval matrices define the approval process for different types of requests.
+            </p>
+        </field>
+    </record>
+
+    <!-- Multi Matrix Level Form View -->
+    <record id="view_multi_matrix_level_form" model="ir.ui.view">
+        <field name="name">multi.matrix.level.form</field>
+        <field name="model">multi.matrix.level</field>
+        <field name="arch" type="xml">
+            <form string="Approval Level">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="matrix_id"/>
+                            <field name="name"/>
+                            <field name="level_sequence"/>
+                            <field name="approval_type"/>
+                        </group>
+                        <group>
+                            <field name="required_approvals" attrs="{'invisible': [('approval_type', 'not in', ['multiple', 'all'])]}"/>
+                            <field name="approval_percentage" attrs="{'invisible': [('approval_type', '!=', 'percentage')]}"/>
+                            <field name="quorum_size" attrs="{'invisible': [('approval_type', '!=', 'quorum')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    
+                    <!-- Approvers -->
+                    <group>
+                        <group>
+                            <field name="approver_ids" widget="many2many_tags"/>
+                            <field name="approver_groups" widget="many2many_tags"/>
+                            <field name="dynamic_approver_field"/>
+                        </group>
+                        <group>
+                            <field name="escalation_user_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Conditions -->
+                    <group>
+                        <group>
+                            <field name="condition_amount_min"/>
+                            <field name="condition_amount_max"/>
+                        </group>
+                        <group>
+                            <field name="condition_department_ids" widget="many2many_tags"/>
+                            <field name="condition_category_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Timeout and Notifications -->
+                    <group>
+                        <group>
+                            <field name="timeout_hours"/>
+                            <field name="auto_approve"/>
+                        </group>
+                        <group>
+                            <field name="notify_approvers"/>
+                            <field name="notify_requester"/>
+                            <field name="notify_escalation"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_approval_matrices" name="Approval Matrices" parent="base.menu_administration" sequence="20"/>
+    <menuitem id="menu_approval_matrices_list" name="All Matrices" parent="menu_approval_matrices" action="action_multi_matrix" sequence="10"/>
+
+</odoo>

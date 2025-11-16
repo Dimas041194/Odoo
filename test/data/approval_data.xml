@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default Email Service -->
+    <record id="default_email_service" model="email.service">
+        <field name="name">Default SMTP Service</field>
+        <field name="smtp_server">localhost</field>
+        <field name="smtp_port">587</field>
+        <field name="smtp_encryption">tls</field>
+        <field name="from_email">noreply@company.com</field>
+        <field name="from_name">Odoo Approval System</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Default Notification Templates -->
+    <record id="template_approval_request" model="notification.template">
+        <field name="name">Approval Request</field>
+        <field name="template_type">approval_request</field>
+        <field name="recipient_type">approver</field>
+        <field name="subject">Approval Request: {{workflow.name}}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #2E86AB;">Approval Request</h2>
+                <p>Dear {{approver.name}},</p>
+                <p>You have received a new approval request that requires your attention.</p>
+                
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0; color: #495057;">Request Details</h3>
+                    <p><strong>Workflow:</strong> {{workflow.name}}</p>
+                    <p><strong>Type:</strong> {{workflow.workflow_type}}</p>
+                    <p><strong>Amount:</strong> {{workflow.amount}} {{workflow.currency}}</p>
+                    <p><strong>Requester:</strong> {{workflow.requester}}</p>
+                    <p><strong>Department:</strong> {{workflow.department}}</p>
+                    <p><strong>Description:</strong> {{workflow.description}}</p>
+                    <p><strong>Request Date:</strong> {{workflow.request_date}}</p>
+                    <p><strong>Deadline:</strong> {{approval.deadline}}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{workflow.id}}&model=approval.workflow&view_type=form" 
+                       style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 0 10px;">
+                        View Request
+                    </a>
+                    <a href="/web#id={{workflow.id}}&model=approval.workflow&view_type=form&action=approve" 
+                       style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 0 10px;">
+                        Approve
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated message from the Odoo Approval System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Approval Request: {{workflow.name}}
+
+Dear {{approver.name}},
+
+You have received a new approval request that requires your attention.
+
+Request Details:
+- Workflow: {{workflow.name}}
+- Type: {{workflow.workflow_type}}
+- Amount: {{workflow.amount}} {{workflow.currency}}
+- Requester: {{workflow.requester}}
+- Department: {{workflow.department}}
+- Description: {{workflow.description}}
+- Request Date: {{workflow.request_date}}
+- Deadline: {{approval.deadline}}
+
+Please log in to the system to review and approve this request.
+
+This is an automated message from the Odoo Approval System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+    </record>
+
+    <record id="template_approval_reminder" model="notification.template">
+        <field name="name">Approval Reminder</field>
+        <field name="template_type">approval_reminder</field>
+        <field name="recipient_type">approver</field>
+        <field name="subject">Reminder: Pending Approval - {{workflow.name}}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #ffc107;">Approval Reminder</h2>
+                <p>Dear {{approver.name}},</p>
+                <p>This is a reminder that you have a pending approval request that requires your attention.</p>
+                
+                <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                    <h3 style="margin-top: 0; color: #856404;">Pending Request</h3>
+                    <p><strong>Workflow:</strong> {{workflow.name}}</p>
+                    <p><strong>Type:</strong> {{workflow.workflow_type}}</p>
+                    <p><strong>Amount:</strong> {{workflow.amount}} {{workflow.currency}}</p>
+                    <p><strong>Requester:</strong> {{workflow.requester}}</p>
+                    <p><strong>Deadline:</strong> {{approval.deadline}}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{workflow.id}}&model=approval.workflow&view_type=form" 
+                       style="background-color: #ffc107; color: #212529; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        Review Request
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated reminder from the Odoo Approval System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Reminder: Pending Approval - {{workflow.name}}
+
+Dear {{approver.name}},
+
+This is a reminder that you have a pending approval request that requires your attention.
+
+Pending Request:
+- Workflow: {{workflow.name}}
+- Type: {{workflow.workflow_type}}
+- Amount: {{workflow.amount}} {{workflow.currency}}
+- Requester: {{workflow.requester}}
+- Deadline: {{approval.deadline}}
+
+Please log in to the system to review this request.
+
+This is an automated reminder from the Odoo Approval System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+    </record>
+
+    <record id="template_approval_approved" model="notification.template">
+        <field name="name">Approval Approved</field>
+        <field name="template_type">approval_approved</field>
+        <field name="recipient_type">requester</field>
+        <field name="subject">Approved: {{workflow.name}}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #28a745;">Request Approved</h2>
+                <p>Dear {{workflow.requester}},</p>
+                <p>Great news! Your approval request has been approved.</p>
+                
+                <div style="background-color: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #28a745;">
+                    <h3 style="margin-top: 0; color: #155724;">Approved Request</h3>
+                    <p><strong>Workflow:</strong> {{workflow.name}}</p>
+                    <p><strong>Type:</strong> {{workflow.workflow_type}}</p>
+                    <p><strong>Amount:</strong> {{workflow.amount}} {{workflow.currency}}</p>
+                    <p><strong>Approved Date:</strong> {{workflow.approved_date}}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{workflow.id}}&model=approval.workflow&view_type=form" 
+                       style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Details
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated message from the Odoo Approval System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Approved: {{workflow.name}}
+
+Dear {{workflow.requester}},
+
+Great news! Your approval request has been approved.
+
+Approved Request:
+- Workflow: {{workflow.name}}
+- Type: {{workflow.workflow_type}}
+- Amount: {{workflow.amount}} {{workflow.currency}}
+- Approved Date: {{workflow.approved_date}}
+
+Please log in to the system to view the details.
+
+This is an automated message from the Odoo Approval System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+    </record>
+
+    <record id="template_approval_rejected" model="notification.template">
+        <field name="name">Approval Rejected</field>
+        <field name="template_type">approval_rejected</field>
+        <field name="recipient_type">requester</field>
+        <field name="subject">Rejected: {{workflow.name}}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #dc3545;">Request Rejected</h2>
+                <p>Dear {{workflow.requester}},</p>
+                <p>Unfortunately, your approval request has been rejected.</p>
+                
+                <div style="background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;">
+                    <h3 style="margin-top: 0; color: #721c24;">Rejected Request</h3>
+                    <p><strong>Workflow:</strong> {{workflow.name}}</p>
+                    <p><strong>Type:</strong> {{workflow.workflow_type}}</p>
+                    <p><strong>Amount:</strong> {{workflow.amount}} {{workflow.currency}}</p>
+                    <p><strong>Rejected Date:</strong> {{workflow.rejected_date}}</p>
+                    <p><strong>Reason:</strong> {{approval.rejection_reason}}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="/web#id={{workflow.id}}&model=approval.workflow&view_type=form" 
+                       style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                        View Details
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 12px;">
+                    This is an automated message from the Odoo Approval System.
+                </p>
+            </div>
+        ]]></field>
+        <field name="body_text">Rejected: {{workflow.name}}
+
+Dear {{workflow.requester}},
+
+Unfortunately, your approval request has been rejected.
+
+Rejected Request:
+- Workflow: {{workflow.name}}
+- Type: {{workflow.workflow_type}}
+- Amount: {{workflow.amount}} {{workflow.currency}}
+- Rejected Date: {{workflow.rejected_date}}
+- Reason: {{approval.rejection_reason}}
+
+Please log in to the system to view the details and consider resubmitting with modifications.
+
+This is an automated message from the Odoo Approval System.</field>
+        <field name="active">True</field>
+        <field name="send_immediately">True</field>
+    </record>
+
+    <!-- Default Approval Matrix -->
+    <record id="default_approval_matrix" model="multi.matrix">
+        <field name="name">Default Approval Matrix</field>
+        <field name="description">Default approval matrix for general requests</field>
+        <field name="matrix_type">amount</field>
+        <field name="min_amount">0</field>
+        <field name="max_amount">10000</field>
+        <field name="state">active</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Default Approval Levels -->
+    <record id="default_approval_level_1" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_approval_matrix"/>
+        <field name="name">Manager Approval</field>
+        <field name="level_sequence">1</field>
+        <field name="approval_type">single</field>
+        <field name="timeout_hours">24</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+    <record id="default_approval_level_2" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_approval_matrix"/>
+        <field name="name">Director Approval</field>
+        <field name="level_sequence">2</field>
+        <field name="approval_type">single</field>
+        <field name="condition_amount_min">1000</field>
+        <field name="timeout_hours">48</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+    <record id="default_approval_level_3" model="multi.matrix.level">
+        <field name="matrix_id" ref="default_approval_matrix"/>
+        <field name="name">CEO Approval</field>
+        <field name="level_sequence">3</field>
+        <field name="approval_type">single</field>
+        <field name="condition_amount_min">5000</field>
+        <field name="timeout_hours">72</field>
+        <field name="notify_approvers">True</field>
+        <field name="notify_requester">True</field>
+    </record>
+
+</odoo>

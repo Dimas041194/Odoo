@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workflow Report Action -->
+    <record id="action_approval_workflow_report" model="ir.actions.report">
+        <field name="name">Approval Workflow Report</field>
+        <field name="model">approval.workflow</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">approval_workflow.report_workflow</field>
+        <field name="report_file">approval_workflow.report_workflow</field>
+        <field name="binding_model_id" ref="model_approval_workflow"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Workflow Report Template -->
+    <template id="report_workflow">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="workflow">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Approval Workflow Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Workflow Name:</strong></td>
+                                        <td><t t-esc="workflow.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Type:</strong></td>
+                                        <td><t t-esc="workflow.workflow_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="workflow.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amount:</strong></td>
+                                        <td><t t-esc="workflow.amount"/> <t t-esc="workflow.currency_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Requester:</strong></td>
+                                        <td><t t-esc="workflow.requester_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Department:</strong></td>
+                                        <td><t t-esc="workflow.department_id.name or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Request Date:</strong></td>
+                                        <td><t t-esc="workflow.request_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Approval Deadline:</strong></td>
+                                        <td><t t-esc="workflow.approval_deadline or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Description</h3>
+                                <p><t t-esc="workflow.description or ''"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Approval Progress</h3>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Level</th>
+                                            <th>Approver</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Comments</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="workflow.approval_ids" t-as="approval">
+                                            <tr>
+                                                <td><t t-esc="approval.level_id.name"/></td>
+                                                <td><t t-esc="approval.approver_id.name"/></td>
+                                                <td><t t-esc="approval.state"/></td>
+                                                <td>
+                                                    <t t-if="approval.approved_date">
+                                                        <t t-esc="approval.approved_date"/>
+                                                    </t>
+                                                    <t t-elif="approval.rejected_date">
+                                                        <t t-esc="approval.rejected_date"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        Pending
+                                                    </t>
+                                                </td>
+                                                <td><t t-esc="approval.comments or ''"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Approval Report Action -->
+    <record id="action_approval_report" model="ir.actions.report">
+        <field name="name">Approval Report</field>
+        <field name="model">approval.workflow.approval</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">approval_workflow.report_approval</field>
+        <field name="report_file">approval_workflow.report_approval</field>
+        <field name="binding_model_id" ref="model_approval_workflow_approval"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Approval Report Template -->
+    <template id="report_approval">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="approval">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Approval Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Workflow:</strong></td>
+                                        <td><t t-esc="approval.workflow_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Level:</strong></td>
+                                        <td><t t-esc="approval.level_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Approver:</strong></td>
+                                        <td><t t-esc="approval.approver_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="approval.state"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Created Date:</strong></td>
+                                        <td><t t-esc="approval.create_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Approved Date:</strong></td>
+                                        <td><t t-esc="approval.approved_date or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Rejected Date:</strong></td>
+                                        <td><t t-esc="approval.rejected_date or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Processing Time:</strong></td>
+                                        <td><t t-esc="approval.processing_time"/> hours</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Comments</h3>
+                                <p><t t-esc="approval.comments or 'No comments provided'"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16" t-if="approval.rejection_reason">
+                            <div class="col-12">
+                                <h3>Rejection Reason</h3>
+                                <p><t t-esc="approval.rejection_reason"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Notification Report Action -->
+    <record id="action_notification_report" model="ir.actions.report">
+        <field name="name">Notification Report</field>
+        <field name="model">notification.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">approval_workflow.report_notification</field>
+        <field name="report_file">approval_workflow.report_notification</field>
+        <field name="binding_model_id" ref="model_notification_log"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Notification Report Template -->
+    <template id="report_notification">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="notification">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Notification Report</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Template:</strong></td>
+                                        <td><t t-esc="notification.template_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Recipient:</strong></td>
+                                        <td><t t-esc="notification.recipient_email or notification.recipient_user_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Type:</strong></td>
+                                        <td><t t-esc="notification.recipient_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td><t t-esc="notification.state"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Subject:</strong></td>
+                                        <td><t t-esc="notification.subject"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sent Date:</strong></td>
+                                        <td><t t-esc="notification.sent_date or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Opened Date:</strong></td>
+                                        <td><t t-esc="notification.opened_date or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Clicked Date:</strong></td>
+                                        <td><t t-esc="notification.clicked_date or ''"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Message Content</h3>
+                                <div t-raw="notification.body_html or notification.body_text"/>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt16" t-if="notification.error_message">
+                            <div class="col-12">
+                                <h3>Error Information</h3>
+                                <p><t t-esc="notification.error_message"/></p>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

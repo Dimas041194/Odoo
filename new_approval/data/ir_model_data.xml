@@ -1,0 +1,7 @@
+<odoo>
+    <record id="model_x_new_approval_request" model="ir.model">
+        <field name="name">x.new.approval.request</field>
+        <field name="model">x.new.approval.request</field>
+        <field name="state">base</field>
+    </record>
+</odoo>

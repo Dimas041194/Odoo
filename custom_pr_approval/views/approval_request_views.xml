@@ -1,0 +1,44 @@
+<odoo>
+    <record id="view_approval_request_tree" model="ir.ui.view">
+        <field name="name">custom.approval.request.tree</field>
+        <field name="model">custom.approval.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="pr_id"/>
+                <field name="approval_flow_id"/>
+                <field name="level"/>
+                <field name="approver_id"/>
+                <field name="state"/>
+                <field name="date_approved"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_request_form" model="ir.ui.view">
+        <field name="name">custom.approval.request.form</field>
+        <field name="model">custom.approval.request</field>
+        <field name="arch" type="xml">
+            <form string="Approval Request">
+                <sheet>
+                    <group>
+                        <field name="pr_id" readonly="1"/>
+                        <field name="approval_flow_id" readonly="1"/>
+                        <field name="level" readonly="1"/>
+                        <field name="approver_id" readonly="1"/>
+                        <field name="state" readonly="1"/>
+                        <field name="date_approved" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button string="Approve" type="object" name="action_approve"
+                                attrs="{'invisible': ['|', ('state', '!=', 'pending'), ('approver_id', '!=', user.id)]}"
+                                class="btn-primary"/>
+                        <button string="Reject" type="object" name="action_reject"
+                                attrs="{'invisible': ['|', ('state', '!=', 'pending'), ('approver_id', '!=', user.id)]}"
+                                class="btn-danger"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

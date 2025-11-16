@@ -1,0 +1,21 @@
+{
+    'name': 'Purchase Request Approval',
+    'version': '1.0',
+    'category': 'Purchases',
+    'summary': 'Advanced Purchase Request with Multi-level Approval Workflow',
+    'author': 'Dimas Aryo Novantri',
+    'depends': ['purchase', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/security.xml',
+        'data/sequence_data.xml',
+        'data/email_templates.xml',
+        'data/record_rules.xml',              
+        'views/purchase_request_views.xml',
+        'views/purchase_request_menus.xml',
+        'views/approval_rule_views.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

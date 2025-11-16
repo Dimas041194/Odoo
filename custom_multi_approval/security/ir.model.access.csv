@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custom_approval_flow,access_custom_approval_flow,model_custom_approval_flow,,1,1,1,1
+access_custom_approval_request,access_custom_approval_request,model_custom_approval_request,,1,1,1,1
+access_custom_approval_line,access_custom_approval_line,model_custom_approval_line,,1,1,1,1

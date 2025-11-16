@@ -1,0 +1,67 @@
+<odoo>
+  <data>
+    <!-- List View -->
+    <record id="view_purchase_request_list" model="ir.ui.view">
+      <field name="name">purchase.request.list</field>
+      <field name="model">purchase.request</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="request_date"/>
+          <field name="requested_by"/>
+          <field name="state"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_purchase_request_form" model="ir.ui.view">
+      <field name="name">purchase.request.form</field>
+      <field name="model">purchase.request</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button name="action_approve" string="Approve" type="object"/>
+            <button name="action_create_po" string="Create PO" type="object"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="request_date"/>
+              <field name="requested_by"/>
+            </group>
+            <notebook>
+              <page string="Request Lines">
+                <field name="line_ids">
+                  <list editable="bottom">
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="vendor_id"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Menu Root -->
+    <menuitem id="menu_purchase_request_root" name="Purchase Request"/>
+
+    <!-- Action Window -->
+    <record id="action_purchase_request" model="ir.actions.act_window">
+      <field name="name">Purchase Requests</field>
+      <field name="res_model">purchase.request</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="view_purchase_request_list"/>
+    </record>
+
+    <!-- Submenu yang langsung mengarah ke action -->
+    <menuitem id="menu_purchase_request"
+              name="Requests"
+              parent="menu_purchase_request_root"
+              action="action_purchase_request"/>
+  </data>
+</odoo>

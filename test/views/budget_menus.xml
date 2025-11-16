@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Budget Management Menu -->
+    <menuitem id="menu_budget_main" 
+              name="Budget Management" 
+              sequence="20" 
+              web_icon="budget_management,static/description/icon.png"/>
+
+    <!-- Budget Overview -->
+    <menuitem id="menu_budget_overview" 
+              name="Budget Overview" 
+              parent="menu_budget_main" 
+              action="action_budget_management" 
+              sequence="10"/>
+
+    <!-- Budget Management -->
+    <menuitem id="menu_budget_management" 
+              name="Budgets" 
+              parent="menu_budget_main" 
+              action="action_budget_management" 
+              sequence="20"/>
+
+    <!-- Budget Lines -->
+    <menuitem id="menu_budget_lines" 
+              name="Budget Lines" 
+              parent="menu_budget_main" 
+              action="action_budget_line" 
+              sequence="30"/>
+
+    <!-- Budget Commitments -->
+    <menuitem id="menu_budget_commitments" 
+              name="Commitments" 
+              parent="menu_budget_main" 
+              action="action_budget_commitment" 
+              sequence="40"/>
+
+    <!-- Budget Alerts -->
+    <menuitem id="menu_budget_alerts" 
+              name="Alerts" 
+              parent="menu_budget_main" 
+              action="action_budget_alert" 
+              sequence="50"/>
+
+    <!-- Budget Dashboard -->
+    <menuitem id="menu_budget_dashboard" 
+              name="Dashboard" 
+              parent="menu_budget_main" 
+              action="action_budget_dashboard" 
+              sequence="60"/>
+
+    <!-- Budget Reports -->
+    <menuitem id="menu_budget_reports" 
+              name="Reports" 
+              parent="menu_budget_main" 
+              sequence="70"/>
+
+    <menuitem id="menu_budget_reports_analysis" 
+              name="Budget Analysis" 
+              parent="menu_budget_reports" 
+              action="action_budget_analysis_report" 
+              sequence="10"/>
+
+    <menuitem id="menu_budget_reports_commitment" 
+              name="Commitment Report" 
+              parent="menu_budget_reports" 
+              action="action_budget_commitment_report" 
+              sequence="20"/>
+
+    <menuitem id="menu_budget_reports_overbudget" 
+              name="Overbudget Report" 
+              parent="menu_budget_reports" 
+              action="action_budget_overbudget_report" 
+              sequence="30"/>
+
+    <!-- Budget Configuration -->
+    <menuitem id="menu_budget_config" 
+              name="Configuration" 
+              parent="menu_budget_main" 
+              sequence="80"/>
+
+    <menuitem id="menu_budget_config_settings" 
+              name="Settings" 
+              parent="menu_budget_config" 
+              action="action_budget_settings" 
+              sequence="10"/>
+
+    <menuitem id="menu_budget_config_thresholds" 
+              name="Alert Thresholds" 
+              parent="menu_budget_config" 
+              action="action_budget_thresholds" 
+              sequence="20"/>
+
+    <!-- Budget Actions -->
+    <record id="action_budget_line" model="ir.actions.act_window">
+        <field name="name">Budget Lines</field>
+        <field name="res_model">budget.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No budget lines found!
+            </p>
+            <p>
+                Budget lines define the detailed breakdown of your budget by account.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_commitment" model="ir.actions.act_window">
+        <field name="name">Budget Commitments</field>
+        <field name="res_model">budget.commitment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No budget commitments found!
+            </p>
+            <p>
+                Budget commitments track spending commitments across all modules.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_alert" model="ir.actions.act_window">
+        <field name="name">Budget Alerts</field>
+        <field name="res_model">budget.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No budget alerts found!
+            </p>
+            <p>
+                Budget alerts notify you about budget thresholds and overbudget situations.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_dashboard" model="ir.actions.act_window">
+        <field name="name">Budget Dashboard</field>
+        <field name="res_model">budget.management</field>
+        <field name="view_mode">dashboard</field>
+        <field name="view_id" ref="view_budget_dashboard"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to Budget Dashboard!
+            </p>
+            <p>
+                Monitor your budget performance, commitments, and alerts from this dashboard.
+            </p>
+        </field>
+    </record>
+
+    <!-- Budget Reports -->
+    <record id="action_budget_analysis_report" model="ir.actions.act_window">
+        <field name="name">Budget Analysis</field>
+        <field name="res_model">budget.management</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No budget data for analysis!
+            </p>
+            <p>
+                Create budgets and track spending to see analysis reports.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_commitment_report" model="ir.actions.act_window">
+        <field name="name">Commitment Report</field>
+        <field name="res_model">budget.commitment</field>
+        <field name="view_mode">tree,graph,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No commitment data found!
+            </p>
+            <p>
+                Budget commitments will appear here when created.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_overbudget_report" model="ir.actions.act_window">
+        <field name="name">Overbudget Report</field>
+        <field name="res_model">budget.alert</field>
+        <field name="view_mode">tree,graph,pivot</field>
+        <field name="domain">[('alert_type', '=', 'overbudget')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No overbudget situations found!
+            </p>
+            <p>
+                Overbudget alerts will appear here when detected.
+            </p>
+        </field>
+    </record>
+
+    <!-- Budget Configuration -->
+    <record id="action_budget_settings" model="ir.actions.act_window">
+        <field name="name">Budget Settings</field>
+        <field name="res_model">budget.management</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'active')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No active budgets found!
+            </p>
+            <p>
+                Create and activate budgets to configure settings.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_budget_thresholds" model="ir.actions.act_window">
+        <field name="name">Alert Thresholds</field>
+        <field name="res_model">budget.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('alert_type', '=', 'threshold')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No threshold alerts configured!
+            </p>
+            <p>
+                Threshold alerts are automatically created when budgets are activated.
+            </p>
+        </field>
+    </record>
+
+    <!-- Quick Actions -->
+    <menuitem id="menu_budget_quick" 
+              name="Quick Actions" 
+              parent="menu_budget_main" 
+              sequence="90"/>
+
+    <menuitem id="menu_budget_quick_create" 
+              name="Create Budget" 
+              parent="menu_budget_quick" 
+              action="action_budget_management" 
+              sequence="10"/>
+
+    <menuitem id="menu_budget_quick_dashboard" 
+              name="View Dashboard" 
+              parent="menu_budget_quick" 
+              action="action_budget_dashboard" 
+              sequence="20"/>
+
+    <menuitem id="menu_budget_quick_alerts" 
+              name="View Alerts" 
+              parent="menu_budget_quick" 
+              action="action_budget_alert" 
+              sequence="30"/>
+
+    <menuitem id="menu_budget_quick_commitments" 
+              name="View Commitments" 
+              parent="menu_budget_quick" 
+              action="action_budget_commitment" 
+              sequence="40"/>
+
+</odoo>

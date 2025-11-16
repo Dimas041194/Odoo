@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pr_purchase_request,access_pr_purchase_request,model_pr_purchase_request,,1,1,1,1
+access_pr_purchase_request_line,access_pr_purchase_request_line,model_pr_purchase_request_line,,1,1,1,1
+access_pr_approval_rule,access_pr_approval_rule,model_pr_approval_rule,,1,1,1,1
+access_pr_approval_line,access_pr_approval_line,model_pr_approval_line,,1,1,1,1
+access_pr_approval_status,access_pr_approval_status,model_pr_approval_status,,1,1,1,1

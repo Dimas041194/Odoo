@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Notification Template Tree View -->
+    <record id="view_notification_template_tree" model="ir.ui.view">
+        <field name="name">notification.template.tree</field>
+        <field name="model">notification.template</field>
+        <field name="arch" type="xml">
+            <tree string="Notification Templates" decoration-muted="not active">
+                <field name="name"/>
+                <field name="template_type"/>
+                <field name="recipient_type"/>
+                <field name="lang"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="sent_count" string="Sent"/>
+                <field name="opened_count" string="Opened"/>
+                <field name="clicked_count" string="Clicked"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Notification Template Form View -->
+    <record id="view_notification_template_form" model="ir.ui.view">
+        <field name="name">notification.template.form</field>
+        <field name="model">notification.template</field>
+        <field name="arch" type="xml">
+            <form string="Notification Template">
+                <header>
+                    <button name="action_test_template" string="Test Template" type="object" class="btn-info"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Template Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="template_type"/>
+                            <field name="recipient_type"/>
+                            <field name="lang"/>
+                        </group>
+                        <group>
+                            <field name="send_immediately"/>
+                            <field name="delay_hours" attrs="{'invisible': [('send_immediately', '=', True)]}"/>
+                            <field name="send_time" attrs="{'invisible': [('send_immediately', '=', True)]}"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Email Content -->
+                    <group>
+                        <field name="subject" placeholder="Email Subject"/>
+                    </group>
+                    <notebook>
+                        <page string="Email Content" name="content">
+                            <group>
+                                <field name="body_html" widget="html" placeholder="HTML Email Body"/>
+                            </group>
+                            <group>
+                                <field name="body_text" widget="text" placeholder="Text Email Body"/>
+                            </group>
+                        </page>
+                        <page string="Recipients" name="recipients">
+                            <group>
+                                <field name="custom_recipients" widget="ace" options="{'mode': 'json'}" placeholder="Enter custom recipients in JSON format"/>
+                            </group>
+                        </page>
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group>
+                                    <field name="condition_amount_min"/>
+                                    <field name="condition_amount_max"/>
+                                </group>
+                                <group>
+                                    <field name="condition_department_ids" widget="many2many_tags"/>
+                                    <field name="condition_category_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="custom_conditions" widget="ace" options="{'mode': 'json'}" placeholder="Enter custom conditions in JSON format"/>
+                            </group>
+                        </page>
+                        <page string="Template Variables" name="variables">
+                            <group>
+                                <field name="available_variables" widget="text" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group>
+                                    <field name="sent_count" readonly="1"/>
+                                    <field name="opened_count" readonly="1"/>
+                                    <field name="clicked_count" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification Template Search View -->
+    <record id="view_notification_template_search" model="ir.ui.view">
+        <field name="name">notification.template.search</field>
+        <field name="model">notification.template</field>
+        <field name="arch" type="xml">
+            <search string="Search Notification Templates">
+                <field name="name"/>
+                <field name="template_type"/>
+                <field name="recipient_type"/>
+                <field name="lang"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Approval Request" name="approval_request" domain="[('template_type', '=', 'approval_request')]"/>
+                <filter string="Approval Reminder" name="approval_reminder" domain="[('template_type', '=', 'approval_reminder')]"/>
+                <filter string="Approval Approved" name="approval_approved" domain="[('template_type', '=', 'approval_approved')]"/>
+                <filter string="Approval Rejected" name="approval_rejected" domain="[('template_type', '=', 'approval_rejected')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Template Type" name="group_template_type" context="{'group_by': 'template_type'}"/>
+                    <filter string="Recipient Type" name="group_recipient_type" context="{'group_by': 'recipient_type'}"/>
+                    <filter string="Language" name="group_lang" context="{'group_by': 'lang'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification Template Action -->
+    <record id="action_notification_template" model="ir.actions.act_window">
+        <field name="name">Notification Templates</field>
+        <field name="res_model">notification.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_notification_template_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first notification template!
+            </p>
+            <p>
+                Notification templates define how approval notifications are sent to users.
+            </p>
+        </field>
+    </record>
+
+    <!-- Notification Log Tree View -->
+    <record id="view_notification_log_tree" model="ir.ui.view">
+        <field name="name">notification.log.tree</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <tree string="Notification Logs" decoration-info="state=='sent'" decoration-success="state=='opened'" decoration-warning="state=='clicked'" decoration-danger="state=='failed'">
+                <field name="template_id"/>
+                <field name="recipient_email"/>
+                <field name="recipient_user_id"/>
+                <field name="subject"/>
+                <field name="recipient_type"/>
+                <field name="state" widget="badge" decoration-info="state=='sent'" decoration-success="state=='opened'" decoration-warning="state=='clicked'" decoration-danger="state=='failed'"/>
+                <field name="sent_date"/>
+                <field name="opened_date"/>
+                <field name="clicked_date"/>
+                <field name="retry_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Notification Log Form View -->
+    <record id="view_notification_log_form" model="ir.ui.view">
+        <field name="name">notification.log.form</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <form string="Notification Log">
+                <header>
+                    <button name="action_retry" string="Retry" type="object" class="btn-warning" attrs="{'invisible': [('state', '!=', 'failed')]}"/>
+                    <button name="action_mark_opened" string="Mark Opened" type="object" class="btn-info" attrs="{'invisible': [('state', 'not in', ['sent', 'delivered'])]}"/>
+                    <button name="action_mark_clicked" string="Mark Clicked" type="object" class="btn-success" attrs="{'invisible': [('state', 'not in', ['sent', 'delivered', 'opened'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,delivered,opened,clicked,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="workflow_id"/>
+                            <field name="approval_id"/>
+                        </group>
+                        <group>
+                            <field name="recipient_type"/>
+                            <field name="recipient_email"/>
+                            <field name="recipient_phone"/>
+                            <field name="recipient_user_id"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="subject"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Message Content" name="content">
+                            <field name="body_html" widget="html" readonly="1"/>
+                            <field name="body_text" widget="text" readonly="1"/>
+                        </page>
+                        <page string="Tracking" name="tracking">
+                            <group>
+                                <group>
+                                    <field name="sent_date" readonly="1"/>
+                                    <field name="delivered_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="opened_date" readonly="1"/>
+                                    <field name="clicked_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="retry_count" readonly="1"/>
+                                <field name="max_retries" readonly="1"/>
+                                <field name="next_retry_date" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Error Information" name="error">
+                            <field name="error_message" readonly="1"/>
+                            <field name="response_data" widget="ace" options="{'mode': 'json'}" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification Log Search View -->
+    <record id="view_notification_log_search" model="ir.ui.view">
+        <field name="name">notification.log.search</field>
+        <field name="model">notification.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Notification Logs">
+                <field name="subject"/>
+                <field name="recipient_email"/>
+                <field name="recipient_user_id"/>
+                <field name="template_id"/>
+                <field name="workflow_id"/>
+                <separator/>
+                <filter string="Sent" name="sent" domain="[('state', '=', 'sent')]"/>
+                <filter string="Delivered" name="delivered" domain="[('state', '=', 'delivered')]"/>
+                <filter string="Opened" name="opened" domain="[('state', '=', 'opened')]"/>
+                <filter string="Clicked" name="clicked" domain="[('state', '=', 'clicked')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter string="Today" name="today" domain="[('sent_date', '&gt;=', context_today())]"/>
+                <filter string="This Week" name="this_week" domain="[('sent_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Template" name="group_template" context="{'group_by': 'template_id'}"/>
+                    <filter string="Recipient Type" name="group_recipient_type" context="{'group_by': 'recipient_type'}"/>
+                    <filter string="Sent Date" name="group_sent_date" context="{'group_by': 'sent_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification Log Action -->
+    <record id="action_notification_log" model="ir.actions.act_window">
+        <field name="name">Notification Logs</field>
+        <field name="res_model">notification.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_notification_log_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No notification logs found!
+            </p>
+            <p>
+                Notification logs track all sent notifications and their status.
+            </p>
+        </field>
+    </record>
+
+    <!-- Email Service Tree View -->
+    <record id="view_email_service_tree" model="ir.ui.view">
+        <field name="name">email.service.tree</field>
+        <field name="model">email.service</field>
+        <field name="arch" type="xml">
+            <tree string="Email Services" decoration-muted="not active">
+                <field name="name"/>
+                <field name="smtp_server"/>
+                <field name="smtp_port"/>
+                <field name="from_email"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="emails_sent_today" string="Sent Today"/>
+                <field name="emails_sent_this_hour" string="Sent This Hour"/>
+                <field name="last_sent_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Email Service Form View -->
+    <record id="view_email_service_form" model="ir.ui.view">
+        <field name="name">email.service.form</field>
+        <field name="model">email.service</field>
+        <field name="arch" type="xml">
+            <form string="Email Service">
+                <header>
+                    <button name="test_connection" string="Test Connection" type="object" class="btn-info"/>
+                    <button name="action_test_email" string="Send Test Email" type="object" class="btn-success"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Service Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="smtp_server"/>
+                            <field name="smtp_port"/>
+                            <field name="smtp_encryption"/>
+                        </group>
+                        <group>
+                            <field name="smtp_user"/>
+                            <field name="smtp_password" password="True"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="from_email"/>
+                            <field name="from_name"/>
+                            <field name="reply_to"/>
+                        </group>
+                        <group>
+                            <field name="max_emails_per_hour"/>
+                            <field name="max_emails_per_day"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group>
+                                    <field name="emails_sent_today" readonly="1"/>
+                                    <field name="emails_sent_this_hour" readonly="1"/>
+                                    <field name="total_emails_sent" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="last_sent_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Error Handling" name="error_handling">
+                            <group>
+                                <group>
+                                    <field name="retry_failed_emails"/>
+                                    <field name="max_retry_attempts"/>
+                                    <field name="retry_delay_hours"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Email Service Action -->
+    <record id="action_email_service" model="ir.actions.act_window">
+        <field name="name">Email Services</field>
+        <field name="res_model">email.service</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your first email service!
+            </p>
+            <p>
+                Email services handle sending notifications for the approval system.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_notifications" name="Notifications" parent="base.menu_administration" sequence="40"/>
+    <menuitem id="menu_notification_templates" name="Templates" parent="menu_notifications" action="action_notification_template" sequence="10"/>
+    <menuitem id="menu_notification_logs" name="Logs" parent="menu_notifications" action="action_notification_log" sequence="20"/>
+    <menuitem id="menu_email_services" name="Email Services" parent="menu_notifications" action="action_email_service" sequence="30"/>
+
+</odoo>

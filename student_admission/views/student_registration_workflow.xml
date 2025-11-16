@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Kanban View -->
+    <record id="view_student_registration_kanban" model="ir.ui.view">
+      <field name="name">student.registration.kanban</field>
+      <field name="model">student.registration</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="name"/>
+          <field name="nik"/>
+          <field name="state"/>
+          <field name="photo"/>
+          <field name="email"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div t-if="record.photo.raw_value" class="o_kanban_image">
+                  <img t-att-src="'data:image/png;base64,%s' % record.photo.raw_value"/>
+                </div>
+                <strong><field name="name"/></strong>
+                <div>NIK: <field name="nik"/></div>
+                <div>Status: <field name="state"/></div>
+                <div>Email: <field name="email"/></div>
+                <div class="oe_kanban_footer">
+                  <t t-if="record.state.value == 'draft'">
+                    <span class="badge badge-secondary">Draft</span>
+                  </t>
+                  <t t-if="record.state.value == 'registered'">
+                    <span class="badge badge-info">Terdaftar</span>
+                  </t>
+                  <t t-if="record.state.value == 'paid'">
+                    <span class="badge badge-success">Sudah Bayar</span>
+                  </t>
+                  <t t-if="record.state.value == 'verified'">
+                    <span class="badge badge-primary">Sudah Diverifikasi</span>
+                  </t>
+                  <t t-if="record.state.value == 'screened'">
+                    <span class="badge badge-warning">Screening Dokumen</span>
+                  </t>
+                  <t t-if="record.state.value == 'tested'">
+                    <span class="badge badge-success">Tes Siswa</span>
+                  </t>
+                  <t t-if="record.state.value == 'accepted'">
+                    <span class="badge badge-success">Diterima</span>
+                  </t>
+                  <t t-if="record.state.value == 'rejected'">
+                    <span class="badge badge-danger">Ditolak</span>
+                  </t>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Search View -->
+   <record id="view_student_registration_search" model="ir.ui.view">
+  <field name="name">student.registration.search</field>
+  <field name="model">student.registration</field>
+  <field name="arch" type="xml">
+    <search>
+      <field name="name"/>
+      <field name="state"/>
+      <filter name="filter_accepted" string="Diterima" domain="[('state','=','accepted')]"/>
+      <filter name="filter_rejected" string="Ditolak" domain="[('state','=','rejected')]"/>
+      <filter name="filter_registered" string="Belum Bayar" domain="[('state','=','registered')]"/>
+      <filter name="filter_paid" string="Sudah Bayar" domain="[('state','=','paid')]"/>
+    </search>
+  </field>
+</record>
+
+
+    <!-- Pivot View -->
+    <record id="view_student_registration_pivot" model="ir.ui.view">
+      <field name="name">student.registration.pivot</field>
+      <field name="model">student.registration</field>
+      <field name="arch" type="xml">
+        <pivot>
+          <field name="state"/>
+          <field name="name"/>
+        </pivot>
+      </field>
+    </record>
+
+    <!-- Action Window/Menu Entry -->
+    <record id="action_student_registration" model="ir.actions.act_window">
+      <field name="name">Student Registrations</field>
+      <field name="res_model">student.registration</field>
+      <field name="view_mode">kanban,form,pivot</field>
+      <field name="search_view_id" ref="view_student_registration_search"/>
+    </record>
+
+  </data>
+</odoo>
