@@ -1,0 +1,11 @@
+<odoo>
+    <record id="ir_cron_employee_import_job" model="ir.cron">
+        <field name="name">Employee Import Job Processor</field>
+        <field name="model_id" ref="model_hr_employee_import_job"/>
+        <field name="state">code</field>
+        <field name="code">model.search([('state', '=', 'pending')], limit=10).action_process()</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
