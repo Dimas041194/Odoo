@@ -5,8 +5,9 @@
         <field name="state">code</field>
         <field name="code">model.search([('state', '=', 'pending')], limit=10).action_process()</field>
         <field name="interval_type">minutes</field>
-        <field name="interval_number">-1</field>
+        <field name="interval_number">1</field>
         <field name="active">True</field>
     </record>
 </odoo>
+
 
