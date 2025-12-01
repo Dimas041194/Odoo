@@ -134,25 +134,17 @@ Keterkaitan dengan Proses Pembayaran
 Modul ini terutama menangani pembuatan invoice di Business Central dari data invoice di Odoo. [web:3]  
 Dalam skenario validasi pembayaran, setelah pembayaran dilakukan dan tercatat di BC, dapat ditambahkan modul/skrip terpisah untuk:
 
+* Job queue
 * Membaca status pembayaran atau ledger entries di BC via API. [web:14]  
 * Menghubungkannya ke invoice Odoo berdasarkan ``x_bc_invoice_number`` atau referensi lain.
 * Membuat payment dan melakukan rekonsiliasi otomatis di Odoo sesuai kebutuhan bisnis.
+* Validasi agar hanya invoice yang sudah *posted* yang bisa dikirim ke BC. [web:6]
+* Mekanisme pencegahan pengiriman ganda bila ``x_bc_invoice_number`` sudah terisi.
+* Sinkronisasi balik payment dari BC ke Odoo (otomatis membuat ``account.payment`` dan rekonsiliasi).
 
-Roadmap / Pengembangan Lanjutan
-===============================
-
-* Mengganti penggunaan ``time.sleep(60)`` dengan:
-
-  * Job queue (misal: ``queue_job``) atau
-  * Scheduled action (cron) untuk menghindari *blocking* worker Odoo.
-
-* Menambahkan:
-
-  * Validasi agar hanya invoice yang sudah *posted* yang bisa dikirim ke BC. [web:6]
-  * Mekanisme pencegahan pengiriman ganda bila ``x_bc_invoice_number`` sudah terisi.
-  * Sinkronisasi balik payment dari BC ke Odoo (otomatis membuat ``account.payment`` dan rekonsiliasi).
 
 Lisensi
 =======
 
 Modul ini harus menyebutkan lisensi yang digunakan (misalnya AGPL-3, LGPL-3, atau lainnya) di berkas ``__manifest__.py`` sesuai kebijakan proyek Anda. [web:12]
+
