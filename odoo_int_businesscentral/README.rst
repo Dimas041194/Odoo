@@ -1,139 +1,158 @@
-BC Purchase Invoice Integration
-===============================
+===============================================
+Integrasi Purchase Invoice Odoo - BC (REST API)
+===============================================
 
-Overview
---------
+Deskripsi
+=========
 
-Modul ini menambahkan integrasi antara Odoo 18 dan Microsoft Dynamics 365
-Business Central (BC) untuk mengirim purchase invoice dari Odoo ke BC.
-Integrasi mencakup pembuatan header invoice di BC, pengiriman lines
-(invoice lines) dari Odoo, serta penyimpanan nomor invoice BC kembali
-ke dalam Odoo sebagai referensi.
+Modul ini menambahkan integrasi antara Odoo dan Microsoft Dynamics 365 Business Central (BC) untuk dokumen *Vendor Bill / Purchase Invoice* pada model ``account.move``. [web:13]  
+Invoice header dan invoice lines dari Odoo akan dikirim ke BC melalui REST API menggunakan mekanisme OAuth2 Client Credentials. [web:3]
 
-Saat ini alur utama yang diimplementasikan bersifat satu arah
-(Odoo → BC). Desain modul sudah dipersiapkan agar di tahap berikutnya
-dapat diperluas untuk menarik informasi pembayaran dari BC ke Odoo
-(pembaruan status invoice dan pembuatan payment secara otomatis).
-[web:13]
+Fitur
+=====
 
-Features
---------
+* Penambahan field baru pada ``account.move``:
 
-* Menambahkan field nomor invoice BC pada ``account.move``:
-  ``x_bc_invoice_number`` (No. Invoice BC, readonly).
-* Mendapatkan dan me-*refresh* access token OAuth2 BC secara otomatis
-  dengan mekanisme caching di ``ir.config_parameter``.
-* Mengirim header purchase invoice dari Odoo ke BC.
-* Mengirim invoice lines terkait ke BC berdasarkan nomor invoice BC
-  yang sudah dibuat.
-* Tombol satu kali klik untuk mengirim header, menunggu jeda, lalu
-  mengirim seluruh lines.
-* Pencatatan status dan error melalui ``message_post`` di chatter
-  invoice.
-* Desain extensible untuk penambahan fitur sinkronisasi pembayaran
-  dari BC ke Odoo di masa depan. [web:13]
+  * ``x_bc_invoice_number``: Menyimpan nomor invoice yang dihasilkan dari BC (readonly).
 
-Technical Design
-----------------
+* Manajemen token OAuth2 otomatis:
 
-Model Extension
-~~~~~~~~~~~~~~~
+  * ``_get_valid_token()``: Mengecek token di parameter sistem dan memperbarui jika sudah hampir kedaluwarsa.
+  * ``_get_bc_token()``: Meminta token baru ke Azure AD dan menyimpan token beserta waktu kedaluwarsa ke ``ir.config_parameter``. [web:3]
 
-* Model yang di-*extend*: ``account.move``.
+* Pengiriman header purchase invoice ke BC:
+
+  * Method: ``action_send_to_bc_purchase_invoice()``.
+  * Mengirim data header seperti ``Document_Type`` dan ``Buy_from_Vendor_Name`` ke endpoint OData BC.
+  * Menyimpan nomor invoice BC yang diterima ke ``x_bc_invoice_number`` dan menuliskan log di chatter.
+
+* Pengiriman invoice lines ke BC:
+
+  * Method: ``action_send_lines_to_bc()``.
+  * Hanya berjalan jika ``x_bc_invoice_number`` sudah terisi.
+  * Mengirim setiap baris ``invoice_line_ids`` sebagai ``purchaseInvoiceLines`` di BC (quantity, unit cost, description, item code, dll.).
+  * Baris tanpa ``product_id`` akan dilewati dan dicatat di chatter.
+
+* Tombol utama untuk kirim header + lines:
+
+  * Method: ``action_send_invoice_and_lines()``.
+  * Memanggil pembuatan header, menunggu 60 detik, kemudian mengirim lines ke BC.
+
+Instalasi
+=========
+
+1. Letakkan modul ini di direktori ``custom-addons`` (atau direktori addons kustom Anda). [web:12]  
+2. Pastikan dependency dasar untuk integrasi HTTP (misalnya library ``requests``) sudah tersedia di environment Odoo Anda. [web:15]  
+3. Update daftar modul dan instal modul dari Apps di Odoo.
+
+Konfigurasi
+===========
+
+Sebelum modul digunakan, set parameter berikut di:
+
+*Settings → Technical → Parameters → System Parameters*
+
+Parameter yang diperlukan:
+
+* ``bc_integration.client_id``  
+  Client ID aplikasi di Azure AD.
+
+* ``bc_integration.client_secret``  
+  Client Secret aplikasi di Azure AD.
+
+* ``bc_integration.tenant_id``  
+  Tenant ID Azure AD (GUID tenant).
+
+* ``bc_integration.company_id``  
+  Company ID di Business Central (format GUID yang digunakan di URL OData BC). [web:3]
+
+* ``bc_integration.access_token``  
+  Akan diisi otomatis oleh modul ketika token berhasil diambil.
+
+* ``bc_integration.access_token_expiry``  
+  Akan diisi otomatis oleh modul (epoch time kadaluarsa token).
+
+Pastikan juga:
+
+* Aplikasi Azure AD telah diberikan permission ke API Business Central dengan scope ``https://api.businesscentral.dynamics.com/.default``. [web:3]  
+* Endpoint OData v4 Business Central aktif dan object ``Purchinv`` serta ``purchaseInvoiceLines`` dapat diakses oleh token tersebut.
+
+Penggunaan
+==========
+
+1. Buat atau buka *Vendor Bill / Purchase Invoice* di Odoo (model ``account.move`` dengan ``move_type = 'in_invoice'``). [web:6]  
+2. Pastikan:
+
+   * Vendor sudah benar.
+   * Semua invoice line terisi, termasuk ``product_id`` dan harga satuan.
+
+3. Tekan tombol yang terhubung ke:
+
+   * ``action_send_to_bc_purchase_invoice()`` jika hanya ingin mengirim header, atau
+   * ``action_send_invoice_and_lines()`` jika ingin kirim header dan lines sekaligus (otomatis tunggu 60 detik sebelum kirim lines).
+
+4. Cek chatter di form invoice:
+
+   * Jika berhasil, akan muncul pesan sukses dan field ``No. Invoice BC`` terisi dengan nomor invoice BC.
+   * Jika gagal, pesan error (response text dari BC) akan tercatat di chatter untuk dianalisis.
+
+5. Setelah invoice berada di BC dan pembayaran dilakukan di BC, integrasi lanjutan dapat dibuat untuk:
+
+   * Mengambil data payment dari BC.
+   * Membuat ``account.payment`` di Odoo dan melakukan rekonsiliasi terhadap invoice terkait.
+
+Arsitektur Teknis
+=================
+
+* Model yang di-*inherit*: ``account.move``. [web:12]  
 * Field tambahan:
 
-  * ``x_bc_invoice_number`` (Char, readonly)
-    - Menyimpan nomor invoice yang dikembalikan oleh Business Central.
+  * ``x_bc_invoice_number = fields.Char(string="No. Invoice BC", readonly=True)``
 
-Configuration Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~
+* Pengelolaan Token:
 
-Nilai integrasi BC disimpan di ``ir.config_parameter``:
+  * Token dan expiry disimpan di ``ir.config_parameter`` untuk menghindari permintaan token berulang yang tidak perlu.
+  * Validasi token dilakukan dengan toleransi waktu (buffer 60 detik sebelum expiry).
 
-* ``bc_integration.client_id`` – Client ID aplikasi Azure AD.
-* ``bc_integration.client_secret`` – Client Secret aplikasi Azure AD.
-* ``bc_integration.tenant_id`` – Tenant ID Azure AD.
-* ``bc_integration.company_id`` – ID company di Business Central.
-* ``bc_integration.access_token`` – Access token yang disimpan sementara.
-* ``bc_integration.access_token_expiry`` – Timestamp kadaluarsa token.
+* Endpoint utama yang digunakan:
 
-Dengan pendekatan ini, token hanya diminta ulang ketika:
+  * OAuth2 Token (Azure AD):
 
-* belum tersimpan, atau
-* sudah mendekati kadaluarsa (dihitung berdasarkan ``expires_in``).
+    ``https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token``
 
-Access Token Handling
----------------------
+  * Header Purchase Invoice:
 
-* Method ``_get_valid_token()``:
+    ``https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/Production/ODataV4/Company({company_id})/Purchinv``
 
-  * Membaca token dan waktu kadaluarsa dari ``ir.config_parameter``.
-  * Mengecek waktu saat ini; jika token tidak ada atau hampir kedaluwarsa,
-    akan memanggil ``_get_bc_token()`` untuk mengambil token baru.
-  * Mengembalikan access token yang valid untuk dipakai di request BC.
+  * Purchase Invoice Lines:
 
-* Method ``_get_bc_token()``:
+    ``https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/Production/ODataV4/Company({company_id})/purchaseInvoiceLines``
 
-  * Menyusun request OAuth2 *client_credentials* ke endpoint:
-    ``https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token``.
-  * Mengirim ``client_id``, ``client_secret``, dan ``scope`` standar
-    Business Central: ``https://api.businesscentral.dynamics.com/.default``.
-  * Jika berhasil, menyimpan ``access_token`` dan ``expiry`` ke
-    ``ir.config_parameter`` dan mengembalikannya ke pemanggil.
-  * Jika gagal, melempar exception dengan isi response untuk memudahkan
-    debugging. [web:13]
+Keterkaitan dengan Proses Pembayaran
+====================================
 
-Invoice Header Synchronization
-------------------------------
+Modul ini terutama menangani pembuatan invoice di Business Central dari data invoice di Odoo. [web:3]  
+Dalam skenario validasi pembayaran, setelah pembayaran dilakukan dan tercatat di BC, dapat ditambahkan modul/skrip terpisah untuk:
 
-* Method: ``action_send_to_bc_purchase_invoice()`` pada ``account.move``.
+* Membaca status pembayaran atau ledger entries di BC via API. [web:14]  
+* Menghubungkannya ke invoice Odoo berdasarkan ``x_bc_invoice_number`` atau referensi lain.
+* Membuat payment dan melakukan rekonsiliasi otomatis di Odoo sesuai kebutuhan bisnis.
 
-Alur kerja:
+Roadmap / Pengembangan Lanjutan
+===============================
 
-1. Mengambil access token valid melalui ``_get_valid_token()``.
-2. Mengambil ``company_id`` dan ``tenant_id`` dari konfigurasi.
-3. Menyusun URL endpoint BC, contoh:
-   ``https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/Production/ODataV4/Company({company_id})/Purchinv``.
-4. Menyusun payload header minimal, misalnya:
+* Mengganti penggunaan ``time.sleep(60)`` dengan:
 
-   * ``Document_Type`` = ``Invoice``
-   * ``Buy_from_Vendor_Name`` = nama vendor dari ``partner_id`` invoice.
+  * Job queue (misal: ``queue_job``) atau
+  * Scheduled action (cron) untuk menghindari *blocking* worker Odoo.
 
-5. Mengirim request ``POST`` ke BC dengan header:
+* Menambahkan:
 
-   * ``Authorization: Bearer <token>``
-   * ``Content-Type: application/json``
-   * ``Accept: application/json``
+  * Validasi agar hanya invoice yang sudah *posted* yang bisa dikirim ke BC. [web:6]
+  * Mekanisme pencegahan pengiriman ganda bila ``x_bc_invoice_number`` sudah terisi.
+  * Sinkronisasi balik payment dari BC ke Odoo (otomatis membuat ``account.payment`` dan rekonsiliasi).
 
-6. Jika berhasil (status 200/201):
+Lisensi
+=======
 
-   * Membaca body JSON, mengambil nomor invoice BC
-     (misalnya key ``No`` atau ``Document_No``).
-   * Menyimpan nomor ini ke field ``x_bc_invoice_number``.
-   * Menulis pesan sukses di chatter dengan ``message_post()``.
-
-7. Jika gagal:
-
-   * Menulis pesan error lengkap dari response ke chatter invoice.
-
-Invoice Lines Synchronization
------------------------------
-
-* Method: ``action_send_lines_to_bc()`` pada ``account.move``.
-
-Alur kerja:
-
-1. Mengecek ketersediaan ``x_bc_invoice_number``.
-   Jika kosong, menulis pesan error di chatter dan menghentikan proses.
-2. Mengambil access token, ``company_id``, dan ``tenant_id``.
-3. Menyusun URL endpoint lines, contoh:
-   ``https://api.businesscentral.dynamics.com/v2.0/{tenant_id}/Production/ODataV4/Company({company_id})/purchaseInvoiceLines``.
-4. Menginisialisasi ``line_number`` (misal 10000) lalu loop
-   ``invoice_line_ids``:
-
-   * Jika line tidak memiliki ``product_id``, line dilewati dan
-     dibuatkan pesan peringatan di chatter.
-   * Menyusun payload:
-
-     * ``Document_Type`` = ``Invoice``
-     * ``Document_No`` = ``
+Modul ini harus menyebutkan lisensi yang digunakan (misalnya AGPL-3, LGPL-3, atau lainnya) di berkas ``__manifest__.py`` sesuai kebijakan proyek Anda. [web:12]
